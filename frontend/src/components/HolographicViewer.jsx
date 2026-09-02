@@ -146,6 +146,33 @@ function AutoFitCamera({ children, onSizeCalculated }) {
   return <group ref={groupRef}>{children}</group>;
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <mesh>
+          <boxGeometry args={[50, 50, 50]} />
+          <meshStandardMaterial color="red" wireframe />
+        </mesh>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function HolographicViewer({
   meshUrl,
   partId,
@@ -278,8 +305,9 @@ export default function HolographicViewer({
         <directionalLight position={[-60, -40, -60]} intensity={0.6} color={cinematicMode ? '#00f0ff' : '#ffffff'} />
         <pointLight position={[0, 0, 100]} intensity={0.8} color="#00e5ff" />
 
-        <Suspense fallback={null}>
-          <Center>
+        <ErrorBoundary>
+          <Suspense fallback={null}>
+            <Center>
             <AutoFitCamera onSizeCalculated={setModelStats}>
               <HolographicMesh
                 url={meshUrl}
@@ -302,6 +330,7 @@ export default function HolographicViewer({
             </AutoFitCamera>
           </Center>
         </Suspense>
+        </ErrorBoundary>
 
         <OrbitControls
           ref={controlsRef}
