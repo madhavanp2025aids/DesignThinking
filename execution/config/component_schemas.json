@@ -1,0 +1,569 @@
+{
+  "component_types": {
+    "cylinder": {
+      "display_name": "Hydraulic Cylinder",
+      "required_fields": [
+        "bore_diameter_mm",
+        "rod_diameter_mm",
+        "stroke_length_mm",
+        "working_pressure_bar"
+      ],
+      "optional_fields": [
+        "port_type",
+        "mounting_type",
+        "seal_type",
+        "retracted_length_mm",
+        "max_pressure_bar",
+        "rod_end_type",
+        "cushioning"
+      ],
+      "field_definitions": {
+        "bore_diameter_mm": {
+          "display_name": "Bore Diameter",
+          "canonical_unit": "mm",
+          "data_type": "number",
+          "aliases": [
+            "bore dia", "bore diameter", "cylinder bore", "bore", "bore size",
+            "inner diameter", "ID", "Ø bore", "Ø", "piston diameter",
+            "kolbendurchmesser", "bohrung"
+          ],
+          "unit_variants": {
+            "mm": 1.0,
+            "cm": 10.0,
+            "m": 1000.0,
+            "in": 25.4,
+            "inch": 25.4,
+            "inches": 25.4,
+            "\"": 25.4
+          }
+        },
+        "rod_diameter_mm": {
+          "display_name": "Rod Diameter",
+          "canonical_unit": "mm",
+          "data_type": "number",
+          "aliases": [
+            "rod dia", "rod diameter", "piston rod", "rod size", "rod",
+            "shaft diameter", "shaft dia", "stangendurchmesser"
+          ],
+          "unit_variants": {
+            "mm": 1.0,
+            "cm": 10.0,
+            "m": 1000.0,
+            "in": 25.4,
+            "inch": 25.4,
+            "inches": 25.4,
+            "\"": 25.4
+          }
+        },
+        "stroke_length_mm": {
+          "display_name": "Stroke Length",
+          "canonical_unit": "mm",
+          "data_type": "number",
+          "aliases": [
+            "stroke", "stroke length", "hub", "travel", "extension",
+            "hublänge", "max stroke", "effective stroke"
+          ],
+          "unit_variants": {
+            "mm": 1.0,
+            "cm": 10.0,
+            "m": 1000.0,
+            "in": 25.4,
+            "inch": 25.4,
+            "inches": 25.4,
+            "\"": 25.4
+          }
+        },
+        "working_pressure_bar": {
+          "display_name": "Working Pressure",
+          "canonical_unit": "bar",
+          "data_type": "number",
+          "aliases": [
+            "working pressure", "operating pressure", "rated pressure",
+            "nominal pressure", "betriebsdruck", "pressure", "system pressure",
+            "max working pressure", "max operating pressure"
+          ],
+          "unit_variants": {
+            "bar": 1.0,
+            "psi": 0.0689476,
+            "MPa": 10.0,
+            "mpa": 10.0,
+            "kPa": 0.01,
+            "atm": 1.01325,
+            "kg/cm2": 0.980665,
+            "kg/cm²": 0.980665
+          }
+        },
+        "port_type": {
+          "display_name": "Port Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "port", "port type", "port size", "port connection",
+            "hydraulic port", "anschluss", "connection type"
+          ],
+          "unit_variants": {}
+        },
+        "mounting_type": {
+          "display_name": "Mounting Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "mounting", "mount", "mounting type", "mounting style",
+            "befestigung", "mount type", "attachment"
+          ],
+          "unit_variants": {}
+        },
+        "seal_type": {
+          "display_name": "Seal Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "seal", "seal type", "sealing", "dichtung", "seal material",
+            "packing", "seal kit"
+          ],
+          "unit_variants": {}
+        },
+        "retracted_length_mm": {
+          "display_name": "Retracted Length",
+          "canonical_unit": "mm",
+          "data_type": "number",
+          "aliases": [
+            "retracted length", "closed length", "min length",
+            "collapsed length", "einbaulänge"
+          ],
+          "unit_variants": {
+            "mm": 1.0,
+            "cm": 10.0,
+            "m": 1000.0,
+            "in": 25.4,
+            "inch": 25.4
+          }
+        },
+        "max_pressure_bar": {
+          "display_name": "Max Pressure",
+          "canonical_unit": "bar",
+          "data_type": "number",
+          "aliases": [
+            "max pressure", "maximum pressure", "burst pressure",
+            "test pressure", "proof pressure"
+          ],
+          "unit_variants": {
+            "bar": 1.0,
+            "psi": 0.0689476,
+            "MPa": 10.0,
+            "mpa": 10.0
+          }
+        },
+        "rod_end_type": {
+          "display_name": "Rod End Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "rod end", "rod end type", "rod attachment", "clevise",
+            "rod eye", "thread"
+          ],
+          "unit_variants": {}
+        },
+        "cushioning": {
+          "display_name": "Cushioning",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "cushioning", "cushion", "end cushion", "damping",
+            "endlagendämpfung"
+          ],
+          "unit_variants": {}
+        }
+      }
+    },
+    "valve": {
+      "display_name": "Hydraulic Valve",
+      "required_fields": [
+        "valve_type",
+        "port_size",
+        "max_pressure_bar",
+        "max_flow_lpm"
+      ],
+      "optional_fields": [
+        "actuation_type",
+        "mounting_pattern",
+        "voltage",
+        "body_material"
+      ],
+      "field_definitions": {
+        "valve_type": {
+          "display_name": "Valve Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "valve type", "type", "valve", "function", "valve function",
+            "directional control", "DCV", "relief valve", "check valve"
+          ],
+          "unit_variants": {}
+        },
+        "port_size": {
+          "display_name": "Port Size",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "port size", "port", "connection size", "nominal size",
+            "nennweite", "DN"
+          ],
+          "unit_variants": {}
+        },
+        "max_pressure_bar": {
+          "display_name": "Max Pressure",
+          "canonical_unit": "bar",
+          "data_type": "number",
+          "aliases": [
+            "max pressure", "maximum pressure", "rated pressure",
+            "working pressure", "operating pressure"
+          ],
+          "unit_variants": {
+            "bar": 1.0,
+            "psi": 0.0689476,
+            "MPa": 10.0
+          }
+        },
+        "max_flow_lpm": {
+          "display_name": "Max Flow Rate",
+          "canonical_unit": "L/min",
+          "data_type": "number",
+          "aliases": [
+            "max flow", "flow rate", "flow", "nominal flow",
+            "rated flow", "volumenstrom", "Q max", "Qmax"
+          ],
+          "unit_variants": {
+            "L/min": 1.0,
+            "l/min": 1.0,
+            "lpm": 1.0,
+            "gpm": 3.78541,
+            "GPM": 3.78541,
+            "cm3/min": 0.001
+          }
+        },
+        "actuation_type": {
+          "display_name": "Actuation Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "actuation", "actuator", "operation", "betätigung",
+            "solenoid", "manual", "pilot operated"
+          ],
+          "unit_variants": {}
+        },
+        "mounting_pattern": {
+          "display_name": "Mounting Pattern",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "mounting pattern", "mounting", "interface", "pattern",
+            "cetop", "ISO", "NFPA"
+          ],
+          "unit_variants": {}
+        },
+        "voltage": {
+          "display_name": "Voltage",
+          "canonical_unit": "V",
+          "data_type": "string",
+          "aliases": [
+            "voltage", "coil voltage", "supply voltage", "spannung",
+            "V DC", "V AC"
+          ],
+          "unit_variants": {}
+        },
+        "body_material": {
+          "display_name": "Body Material",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "material", "body material", "housing material", "werkstoff"
+          ],
+          "unit_variants": {}
+        }
+      }
+    },
+    "pump": {
+      "display_name": "Hydraulic Pump",
+      "required_fields": [
+        "pump_type",
+        "displacement_cc",
+        "max_pressure_bar",
+        "max_speed_rpm"
+      ],
+      "optional_fields": [
+        "drive_type",
+        "rotation_direction",
+        "port_size",
+        "shaft_type"
+      ],
+      "field_definitions": {
+        "pump_type": {
+          "display_name": "Pump Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "pump type", "type", "pump", "gear pump", "vane pump",
+            "piston pump", "axial piston"
+          ],
+          "unit_variants": {}
+        },
+        "displacement_cc": {
+          "display_name": "Displacement",
+          "canonical_unit": "cc/rev",
+          "data_type": "number",
+          "aliases": [
+            "displacement", "volumetric displacement", "swept volume",
+            "cc/rev", "cm3/rev", "hubvolumen", "Vg"
+          ],
+          "unit_variants": {
+            "cc/rev": 1.0,
+            "cm3/rev": 1.0,
+            "ml/rev": 1.0,
+            "in3/rev": 16.387,
+            "L/rev": 1000.0
+          }
+        },
+        "max_pressure_bar": {
+          "display_name": "Max Pressure",
+          "canonical_unit": "bar",
+          "data_type": "number",
+          "aliases": [
+            "max pressure", "maximum pressure", "rated pressure",
+            "continuous pressure", "peak pressure"
+          ],
+          "unit_variants": {
+            "bar": 1.0,
+            "psi": 0.0689476,
+            "MPa": 10.0
+          }
+        },
+        "max_speed_rpm": {
+          "display_name": "Max Speed",
+          "canonical_unit": "rpm",
+          "data_type": "number",
+          "aliases": [
+            "max speed", "maximum speed", "rated speed", "speed",
+            "drehzahl", "n max", "nmax"
+          ],
+          "unit_variants": {
+            "rpm": 1.0,
+            "rev/min": 1.0,
+            "min-1": 1.0,
+            "1/min": 1.0
+          }
+        },
+        "drive_type": {
+          "display_name": "Drive Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": ["drive", "drive type", "motor", "antrieb"],
+          "unit_variants": {}
+        },
+        "rotation_direction": {
+          "display_name": "Rotation Direction",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "rotation", "rotation direction", "direction", "drehrichtung",
+            "CW", "CCW", "clockwise", "counterclockwise"
+          ],
+          "unit_variants": {}
+        },
+        "port_size": {
+          "display_name": "Port Size",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": ["port size", "port", "inlet", "outlet", "suction port"],
+          "unit_variants": {}
+        },
+        "shaft_type": {
+          "display_name": "Shaft Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "shaft", "shaft type", "drive shaft", "welle",
+            "keyed shaft", "splined shaft"
+          ],
+          "unit_variants": {}
+        }
+      }
+    },
+    "hose": {
+      "display_name": "Hydraulic Hose",
+      "required_fields": [
+        "inner_diameter_mm",
+        "working_pressure_bar",
+        "length_mm"
+      ],
+      "optional_fields": [
+        "outer_diameter_mm",
+        "burst_pressure_bar",
+        "hose_type",
+        "fitting_type",
+        "temperature_range"
+      ],
+      "field_definitions": {
+        "inner_diameter_mm": {
+          "display_name": "Inner Diameter",
+          "canonical_unit": "mm",
+          "data_type": "number",
+          "aliases": [
+            "inner diameter", "ID", "bore", "hose bore", "nominal bore",
+            "innendurchmesser"
+          ],
+          "unit_variants": {
+            "mm": 1.0, "cm": 10.0, "in": 25.4, "inch": 25.4
+          }
+        },
+        "working_pressure_bar": {
+          "display_name": "Working Pressure",
+          "canonical_unit": "bar",
+          "data_type": "number",
+          "aliases": [
+            "working pressure", "operating pressure", "rated pressure",
+            "max working pressure"
+          ],
+          "unit_variants": {
+            "bar": 1.0, "psi": 0.0689476, "MPa": 10.0
+          }
+        },
+        "length_mm": {
+          "display_name": "Length",
+          "canonical_unit": "mm",
+          "data_type": "number",
+          "aliases": [
+            "length", "hose length", "overall length", "OAL", "länge"
+          ],
+          "unit_variants": {
+            "mm": 1.0, "cm": 10.0, "m": 1000.0, "in": 25.4, "ft": 304.8
+          }
+        },
+        "outer_diameter_mm": {
+          "display_name": "Outer Diameter",
+          "canonical_unit": "mm",
+          "data_type": "number",
+          "aliases": [
+            "outer diameter", "OD", "outside diameter", "außendurchmesser"
+          ],
+          "unit_variants": {
+            "mm": 1.0, "cm": 10.0, "in": 25.4
+          }
+        },
+        "burst_pressure_bar": {
+          "display_name": "Burst Pressure",
+          "canonical_unit": "bar",
+          "data_type": "number",
+          "aliases": ["burst pressure", "min burst", "burst", "berstdruck"],
+          "unit_variants": {
+            "bar": 1.0, "psi": 0.0689476, "MPa": 10.0
+          }
+        },
+        "hose_type": {
+          "display_name": "Hose Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": ["hose type", "type", "standard", "SAE", "EN", "DIN"],
+          "unit_variants": {}
+        },
+        "fitting_type": {
+          "display_name": "Fitting Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": ["fitting", "fitting type", "end fitting", "coupling"],
+          "unit_variants": {}
+        },
+        "temperature_range": {
+          "display_name": "Temperature Range",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "temperature", "temp range", "operating temperature",
+            "temperaturbereich"
+          ],
+          "unit_variants": {}
+        }
+      }
+    },
+    "fitting": {
+      "display_name": "Hydraulic Fitting",
+      "required_fields": [
+        "fitting_type",
+        "size",
+        "working_pressure_bar"
+      ],
+      "optional_fields": [
+        "material",
+        "thread_type",
+        "angle",
+        "seal_type"
+      ],
+      "field_definitions": {
+        "fitting_type": {
+          "display_name": "Fitting Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "fitting type", "type", "fitting", "connector", "adapter",
+            "elbow", "tee", "straight", "coupling"
+          ],
+          "unit_variants": {}
+        },
+        "size": {
+          "display_name": "Size",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "size", "nominal size", "fitting size", "connection size", "DN"
+          ],
+          "unit_variants": {}
+        },
+        "working_pressure_bar": {
+          "display_name": "Working Pressure",
+          "canonical_unit": "bar",
+          "data_type": "number",
+          "aliases": [
+            "working pressure", "rated pressure", "max pressure",
+            "operating pressure"
+          ],
+          "unit_variants": {
+            "bar": 1.0, "psi": 0.0689476, "MPa": 10.0
+          }
+        },
+        "material": {
+          "display_name": "Material",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": ["material", "body material", "werkstoff", "steel", "brass"],
+          "unit_variants": {}
+        },
+        "thread_type": {
+          "display_name": "Thread Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": [
+            "thread", "thread type", "connection", "BSP", "NPT",
+            "metric", "JIC", "ORFS", "gewinde"
+          ],
+          "unit_variants": {}
+        },
+        "angle": {
+          "display_name": "Angle",
+          "canonical_unit": "degrees",
+          "data_type": "number",
+          "aliases": ["angle", "bend angle", "elbow angle", "winkel"],
+          "unit_variants": {
+            "degrees": 1.0, "deg": 1.0, "°": 1.0
+          }
+        },
+        "seal_type": {
+          "display_name": "Seal Type",
+          "canonical_unit": null,
+          "data_type": "string",
+          "aliases": ["seal", "seal type", "sealing", "o-ring", "dichtung"],
+          "unit_variants": {}
+        }
+      }
+    }
+  }
+}
