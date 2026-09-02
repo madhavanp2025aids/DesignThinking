@@ -22,6 +22,10 @@ class User(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     email = Column(String, unique=True, nullable=False, index=True)
     hashed_password = Column(String, nullable=False)
+    email_verified = Column(Integer, default=0)  # 0=unverified, 1=verified
+    verification_code = Column(String, nullable=True)  # Hashed 6-digit OTP
+    verification_code_expires_at = Column(DateTime, nullable=True)  # Expiry timestamp (10 mins)
+    last_verification_sent_at = Column(DateTime, nullable=True)  # 60s cooldown timestamp
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationships

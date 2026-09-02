@@ -23,6 +23,7 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     id: str
     email: str
+    email_verified: bool = False
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -30,6 +31,25 @@ class UserResponse(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
+    token_type: str = "bearer"
+    email_verified: bool = True
+    requires_verification: bool = False
+    message: Optional[str] = None
+
+
+class VerifyEmailRequest(BaseModel):
+    email: str
+    code: str
+
+
+class ResendCodeRequest(BaseModel):
+    email: str
+
+
+class VerifyEmailResponse(BaseModel):
+    message: str
+    email_verified: bool
+    access_token: Optional[str] = None
     token_type: str = "bearer"
 
 

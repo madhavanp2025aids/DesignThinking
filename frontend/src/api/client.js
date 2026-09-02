@@ -54,16 +54,26 @@ class ApiClient {
 
       clearTimeout(timeoutId);
 
-      if (response.status === 401) {
+      if (response.status === 401 && !endpoint.startsWith('/auth/')) {
         this.clearToken();
-        window.location.href = '/';
+        if (window.location.pathname !== '/') {
+          window.location.href = '/';
+        }
         throw new Error('Session expired. Please log in again.');
       }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const message = errorData.detail || errorData.error || `Server error (${response.status})`;
-        throw new Error(typeof message === 'string' ? message : JSON.stringify(message));
+        let message = errorData.detail || errorData.error || `Server error (${response.status})`;
+        if (endpoint === '/auth/login' && response.status === 401) {
+          message = 'Invalid email or password. If you do not have an account yet, click "Create Account" below.';
+        }
+        const err = new Error(typeof message === 'string' ? message : JSON.stringify(message));
+        if (errorData.requires_verification) {
+          err.requires_verification = true;
+          err.email = errorData.email;
+        }
+        throw err;
       }
 
       if (response.status === 204) return null;
@@ -109,7 +119,9 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    this.setToken(data.access_token);
+    if (data.access_token) {
+      this.setToken(data.access_token);
+    }
     return data;
   }
 
@@ -118,8 +130,28 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    this.setToken(data.access_token);
+    if (data.access_token) {
+      this.setToken(data.access_token);
+    }
     return data;
+  }
+
+  async verifyEmail(email, code) {
+    const data = await this.request('/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ email, code }),
+    });
+    if (data.access_token) {
+      this.setToken(data.access_token);
+    }
+    return data;
+  }
+
+  async resendVerificationCode(email) {
+    return this.request('/auth/resend-code', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
   }
 
   async getMe() {

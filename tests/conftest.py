@@ -45,7 +45,11 @@ def setup_and_teardown_db():
 @pytest.fixture
 def auth_headers():
     db = TestingSessionLocal()
-    user = User(email="tester@hydac.com", hashed_password=hash_password("EngineeringSecure2026!"))
+    user = User(
+        email="tester@hydac.com",
+        hashed_password=hash_password("EngineeringSecure2026!"),
+        email_verified=1
+    )
     db.add(user)
     db.commit()
     db.refresh(user)
