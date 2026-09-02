@@ -5,7 +5,7 @@ Request/response models matching the data schemas defined in CLAUDE.md.
 
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 # ── Auth Schemas ──────────────────────────────────────────────
@@ -25,8 +25,7 @@ class UserResponse(BaseModel):
     email: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TokenResponse(BaseModel):
@@ -44,8 +43,7 @@ class UploadedFileResponse(BaseModel):
     parse_status: str
     parse_error: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ── Parameter / Traceability Schemas ──────────────────────────
@@ -68,8 +66,7 @@ class ComponentResponse(BaseModel):
     user_confirmed: bool = False
     file_id: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ParameterUpdate(BaseModel):
@@ -98,8 +95,7 @@ class GenerationJobResponse(BaseModel):
     created_at: datetime
     completed_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ── Pipeline Status ───────────────────────────────────────────
@@ -114,3 +110,117 @@ class PipelineStatus(BaseModel):
     components_found: int
     ready_for_generation: int
     incomplete: int
+
+
+# ── NEW v2 Schemas (Spec-to-3D Enhanced) ──────────────────────
+
+
+class PartCreate(BaseModel):
+    """Create a new part for spec extraction."""
+    name: str = Field(min_length=1, max_length=200)
+
+
+class PartResponse(BaseModel):
+    id: str
+    name: str
+    part_type: Optional[str] = None
+    status: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SpecDocumentResponse(BaseModel):
+    id: str
+    part_id: str
+    filename: str
+    format: str
+    upload_timestamp: datetime
+    ocr_flag: bool = False
+    parse_status: str
+    parse_error: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SpecFieldResponse(BaseModel):
+    id: str
+    part_id: str
+    document_id: str
+    field_name: str
+    raw_value: Optional[str] = None
+    normalized_value: Optional[str] = None
+    unit: Optional[str] = None
+    original_unit: Optional[str] = None
+    source_location: Optional[str] = None
+    source_snippet: Optional[str] = None
+    confidence: str = "medium"
+    is_available: bool = True
+    not_available_reason: Optional[str] = None
+    user_correction: Optional[str] = None
+    correction_timestamp: Optional[datetime] = None
+    extraction_method: Optional[str] = "regex"
+    conflict: bool = False
+    candidate_values: Optional[list] = None
+    tolerance_data: Optional[dict] = None
+    bbox: Optional[list] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SpecFieldUpdate(BaseModel):
+    """User correction for a spec field."""
+    correction: str
+    unit: Optional[str] = None
+
+
+class ConflictResolution(BaseModel):
+    """User resolution of a conflicting spec value."""
+    chosen_value: str
+    chosen_unit: Optional[str] = None
+
+
+class RevisionDiffResponse(BaseModel):
+    """Summary of changes between document revisions for a part."""
+    part_id: str
+    has_changes: bool
+    added_fields: list[dict]
+    removed_fields: list[dict]
+    changed_fields: list[dict]
+    summary: str
+
+
+class PartGeometryResponse(BaseModel):
+    id: str
+    part_id: str
+    template_used: Optional[str] = None
+    parameters: dict
+    mesh_file_path: Optional[str] = None
+    is_placeholder: bool = False
+    missing_fields: Optional[list] = None
+    generated_at: datetime
+    version: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SpecUploadResponse(BaseModel):
+    """Response after uploading spec documents for a part."""
+    part: PartResponse
+    documents: list[SpecDocumentResponse]
+    message: str
+
+
+class SpecProcessingStatus(BaseModel):
+    """Status of the spec extraction pipeline for a part."""
+    part_id: str
+    part_name: str
+    total_documents: int
+    parsed: int
+    pending: int
+    errors: int
+    total_fields: int
+    available_fields: int
+    unavailable_fields: int
+    status: str  # processing, complete, incomplete, error
+

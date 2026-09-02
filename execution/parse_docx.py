@@ -36,6 +36,32 @@ def parse_docx(file_path: str, filename: str) -> dict:
     para_index = 0
     element_index = 0
 
+    # Extract headers and footers from all sections
+    for sec_idx, section in enumerate(doc.sections, start=1):
+        if section.header and section.header.paragraphs:
+            for p in section.header.paragraphs:
+                txt = p.text.strip()
+                if txt:
+                    result["paragraphs"].append({
+                        "index": para_index,
+                        "text": txt,
+                        "source_location": f"Header (Section {sec_idx})",
+                    })
+                    result["raw_text"] += f"[Header]: {txt}\n"
+                    para_index += 1
+
+        if section.footer and section.footer.paragraphs:
+            for p in section.footer.paragraphs:
+                txt = p.text.strip()
+                if txt:
+                    result["paragraphs"].append({
+                        "index": para_index,
+                        "text": txt,
+                        "source_location": f"Footer (Section {sec_idx})",
+                    })
+                    result["raw_text"] += f"[Footer]: {txt}\n"
+                    para_index += 1
+
     # Iterate document body in order (tables and paragraphs interleaved)
     for element in doc.element.body:
         tag = element.tag.split("}")[-1] if "}" in element.tag else element.tag

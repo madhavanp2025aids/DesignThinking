@@ -1,9 +1,10 @@
 /**
- * HYDAC Spec-to-3D Generator — API Client
- * Fetch wrapper with JWT auth headers, base URL config, error handling.
+ * HYDAC Spec-to-3D Generator — Robust API Client
+ * Fetch wrapper with JWT auth, request timeouts, network retries, and clear error diagnostics.
  */
 
 const API_BASE = 'http://localhost:8000/api';
+const DEFAULT_TIMEOUT_MS = 20000;
 
 class ApiClient {
   constructor() {
@@ -28,7 +29,7 @@ class ApiClient {
     return !!this.getToken();
   }
 
-  async request(endpoint, options = {}) {
+  async request(endpoint, options = {}, retries = 1) {
     const url = `${API_BASE}${endpoint}`;
     const headers = { ...options.headers };
 
@@ -41,33 +42,68 @@ class ApiClient {
       headers['Content-Type'] = 'application/json';
     }
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || DEFAULT_TIMEOUT_MS);
 
-    if (response.status === 401) {
-      this.clearToken();
-      window.location.href = '/';
-      throw new Error('Session expired. Please log in again.');
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.status === 401) {
+        this.clearToken();
+        window.location.href = '/';
+        throw new Error('Session expired. Please log in again.');
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const message = errorData.detail || errorData.error || `Server error (${response.status})`;
+        throw new Error(typeof message === 'string' ? message : JSON.stringify(message));
+      }
+
+      if (response.status === 204) return null;
+
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return response.json();
+      }
+
+      return response;
+    } catch (err) {
+      clearTimeout(timeoutId);
+
+      // Distinguish Abort / Timeout errors
+      if (err.name === 'AbortError') {
+        throw new Error(`Request timed out after ${DEFAULT_TIMEOUT_MS / 1000}s. The server is taking longer than expected.`);
+      }
+
+      // Retry GET requests once on network failure
+      const isGet = !options.method || options.method.toUpperCase() === 'GET';
+      if (retries > 0 && isGet && (err.name === 'TypeError' || err.message.includes('fetch') || err.message.includes('network'))) {
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        return this.request(endpoint, options, retries - 1);
+      }
+
+      // Distinguish connection / network down error
+      if (err.name === 'TypeError' && (err.message.includes('fetch') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
+        throw new Error('Cannot reach server — please confirm the backend is running at http://localhost:8000.');
+      }
+
+      throw err;
     }
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `Request failed: ${response.status}`);
-    }
-
-    if (response.status === 204) return null;
-
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      return response.json();
-    }
-
-    return response;
   }
 
-  // Auth
+  // ── Health & Diagnostics ────────────────────────────────────
+  async getHealth() {
+    return this.request('/health');
+  }
+
+  // ── Auth Endpoints ──────────────────────────────────────────
   async signup(email, password) {
     const data = await this.request('/auth/signup', {
       method: 'POST',
@@ -90,7 +126,126 @@ class ApiClient {
     return this.request('/auth/me');
   }
 
-  // Files
+  // ── Spec Pipeline Endpoints (Primary Flow) ──────────────────
+
+  async uploadSpecFiles(files, partName = '', autoExtract = true) {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+    if (partName) formData.append('part_name', partName);
+    formData.append('auto_extract', autoExtract ? 'true' : 'false');
+    return this.request('/specs/upload', {
+      method: 'POST',
+      body: formData,
+    });
+  }
+
+  async listParts() {
+    return this.request('/specs/parts');
+  }
+
+  async getPart(partId) {
+    return this.request(`/specs/parts/${partId}`);
+  }
+
+  async getPartSpecs(partId) {
+    return this.request(`/specs/${partId}`);
+  }
+
+  async getPartStatus(partId) {
+    return this.request(`/specs/parts/${partId}/status`);
+  }
+
+  async triggerPartExtraction(partId) {
+    return this.request(`/specs/parts/${partId}/extract`, { method: 'POST' });
+  }
+
+  async updateSpecField(fieldId, correction, unit = null) {
+    return this.request(`/specs/fields/${fieldId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ correction, unit }),
+    });
+  }
+
+  async deletePart(partId) {
+    return this.request(`/specs/parts/${partId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async deletePartDocument(partId, documentId) {
+    return this.request(`/specs/parts/${partId}/documents/${documentId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async downloadSpecReport(partId, partName = 'part') {
+    const token = this.getToken();
+    const response = await fetch(`${API_BASE}/specs/${partId}/report`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to generate spec report.');
+    }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${partName.replace(/\s+/g, '_')}_spec_report.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  }
+
+  async resolveConflict(fieldId, chosenValue, chosenUnit = '') {
+    const formData = new FormData();
+    formData.append('chosen_value', chosenValue);
+    if (chosenUnit) formData.append('chosen_unit', chosenUnit);
+    return this.request(`/specs/fields/${fieldId}/resolve_conflict`, {
+      method: 'POST',
+      body: formData,
+    });
+  }
+
+  async getDocumentPageOverlay(documentId, pageNumber = 1) {
+    return this.request(`/specs/documents/${documentId}/page/${pageNumber}`);
+  }
+
+  async getPartDiff(partId) {
+    return this.request(`/specs/parts/${partId}/diff`);
+  }
+
+  // ── 3D Model Generation Endpoints ───────────────────────────
+
+  async generatePartModel(partId, forceRebuild = false) {
+    return this.request(`/models/generate/${partId}?force_rebuild=${forceRebuild}`, {
+      method: 'POST',
+    });
+  }
+
+  async getPartGeometry(partId) {
+    return this.request(`/models/${partId}`);
+  }
+
+  getPartMeshUrl(partId) {
+    const token = this.getToken();
+    return `${API_BASE}/models/${partId}/mesh?token=${token}`;
+  }
+
+  getStepDownloadUrl(partId) {
+    const token = this.getToken();
+    return `${API_BASE}/models/${partId}/step?token=${token}`;
+  }
+
+  getIgesDownloadUrl(partId) {
+    const token = this.getToken();
+    return `${API_BASE}/models/${partId}/iges?token=${token}`;
+  }
+
+  // ── Legacy V1 Endpoints (Preserved for compatibility) ────────
+
   async uploadFiles(files) {
     const formData = new FormData();
     files.forEach((file) => formData.append('files', file));
@@ -108,7 +263,6 @@ class ApiClient {
     return this.request(`/files/${fileId}`, { method: 'DELETE' });
   }
 
-  // Extraction
   async triggerExtraction() {
     return this.request('/extraction/extract', { method: 'POST' });
   }
@@ -128,7 +282,6 @@ class ApiClient {
     return this.request(`/extraction/confirm/${componentId}`, { method: 'POST' });
   }
 
-  // Generation
   async generateModels() {
     return this.request('/generation/generate', { method: 'POST' });
   }

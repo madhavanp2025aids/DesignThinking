@@ -63,6 +63,16 @@ def _extract_text_blocks(parse_result: dict, filename: str, normalized: dict):
                 "source_location": para.get("source_location", "Unknown"),
             })
 
+    # From PPTX slides
+    slides = parse_result.get("slides", [])
+    for slide in slides:
+        text = slide.get("text", "").strip()
+        if text:
+            normalized["text_blocks"].append({
+                "text": text,
+                "source_location": f"Slide {slide.get('slide_num', '?')}",
+            })
+
     # If we have raw_text but no structured blocks (fallback)
     if not normalized["text_blocks"]:
         raw_text = parse_result.get("raw_text", "")

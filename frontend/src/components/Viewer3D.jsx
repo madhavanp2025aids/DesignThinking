@@ -146,6 +146,12 @@ export default function Viewer3D({ meshUrl, onResetView }) {
   const handleReset = () => {
     if (controlsRef.current) {
       controlsRef.current.reset();
+      if (modelStats && modelStats.maxDim) {
+        const distance = modelStats.maxDim * 1.6;
+        controlsRef.current.object.position.set(distance * 0.7, distance * 0.5, distance * 0.7);
+        controlsRef.current.target.set(0, 0, 0);
+        controlsRef.current.update();
+      }
     }
     if (onResetView) onResetView();
   };
@@ -160,6 +166,8 @@ export default function Viewer3D({ meshUrl, onResetView }) {
 
   const floorY = modelStats ? modelStats.minY - (modelStats.maxDim * 0.05) : -50;
   const scale = modelStats ? modelStats.maxDim * 3 : 100;
+  const minZoomDist = modelStats ? Math.max(modelStats.maxDim * 0.35, 1.0) : 5.0;
+  const maxZoomDist = modelStats ? Math.max(modelStats.maxDim * 8.0, 50.0) : 5000.0;
 
   return (
     <div className="viewer-container" style={{ position: 'relative' }}>
@@ -178,9 +186,6 @@ export default function Viewer3D({ meshUrl, onResetView }) {
         />
         <directionalLight position={[-30, 40, -30]} intensity={0.8} />
         <pointLight position={[0, 100, 0]} intensity={0.5} />
-        
-        {/* Environment map for realistic reflections */}
-        {/* <Environment preset="studio" /> */}
 
         <ErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>
@@ -189,32 +194,24 @@ export default function Viewer3D({ meshUrl, onResetView }) {
                 <STLModel url={meshUrl} theme={theme} wireframe={wireframe} />
               </AutoCamera>
             </Center>
-            
-            {/* Smooth contact shadows under the object */}
-            {/* modelStats && (
-              <ContactShadows 
-                position={[0, modelStats.minY - (modelStats.maxDim * 0.02), 0]} 
-                opacity={0.8} 
-                scale={scale} 
-                blur={2.5} 
-                far={scale} 
-                resolution={512} 
-                color="#000000" 
-              />
-            ) */}
           </Suspense>
         </ErrorBoundary>
 
         <OrbitControls
           ref={controlsRef}
-          enableDamping
+          enableRotate={true}
+          enableZoom={true}
+          enablePan={true}
+          enableDamping={true}
           dampingFactor={0.08}
-          enableZoom
-          enablePan
           autoRotate={autoRotate}
           autoRotateSpeed={1.5}
-          minDistance={modelStats ? modelStats.maxDim * 0.5 : 5}
-          maxDistance={modelStats ? modelStats.maxDim * 5 : 5000}
+          minDistance={minZoomDist}
+          maxDistance={maxZoomDist}
+          touches={{
+            ONE: THREE.TOUCH.ROTATE,
+            TWO: THREE.TOUCH.DOLLY_PAN,
+          }}
           makeDefault
         />
 
