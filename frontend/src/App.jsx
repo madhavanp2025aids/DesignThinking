@@ -1,11 +1,11 @@
 /**
- * HYDAC Spec-to-3D Generator — App Entry Point (v2 Enhanced)
- * Primary Flow: /specs/upload → /specs/review/:partId → /specs/viewer/:partId
- * Secondary/Legacy Flow: /upload, /confirm, /generate
+ * HYDAC Spec-to-3D Generator — App Entry Point
+ * Integrates Firebase Auth State Listener, Protected Route Guard,
+ * Primary Spec-to-3D Flow, and Secondary Legacy Tools.
  */
 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import UploadPage from './pages/UploadPage';
 import ConfirmPage from './pages/ConfirmPage';
@@ -14,15 +14,36 @@ import SpecUploadPage from './pages/SpecUploadPage';
 import SpecReviewPage from './pages/SpecReviewPage';
 import HologramViewerPage from './pages/HologramViewerPage';
 import api from './api/client';
+import { auth, onAuthStateChanged, signOut } from './firebase';
 import './index.css';
 
 function ProtectedRoute({ children }) {
   const [health, setHealth] = useState(null);
   const [serverError, setServerError] = useState(false);
   const [showLegacyMenu, setShowLegacyMenu] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     checkHealth();
+
+    // Firebase Auth State Listener
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const idToken = await firebaseUser.getIdToken();
+          api.setToken(idToken);
+          setIsAuthenticated(true);
+        } catch (e) {
+          setIsAuthenticated(api.isAuthenticated());
+        }
+      } else {
+        setIsAuthenticated(api.isAuthenticated());
+      }
+      setAuthLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const checkHealth = async () => {
@@ -35,7 +56,28 @@ function ProtectedRoute({ children }) {
     }
   };
 
-  if (!api.isAuthenticated()) {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.warn('Sign out error:', err);
+    }
+    api.clearToken();
+    window.location.href = '/';
+  };
+
+  if (authLoading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-main)', color: '#00f0ff' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '12px' }}>⚛️</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', letterSpacing: '1px' }}>AUTHENTICATING SPEC-TO-3D SESSION...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
@@ -130,13 +172,7 @@ function ProtectedRoute({ children }) {
           </span>
         </div>
 
-        <button
-          className="nav-logout"
-          onClick={() => {
-            api.clearToken();
-            window.location.href = '/';
-          }}
-        >
+        <button className="nav-logout" onClick={handleLogout}>
           Sign Out
         </button>
       </nav>

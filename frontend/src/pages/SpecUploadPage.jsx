@@ -1,8 +1,3 @@
-/**
- * Spec-to-3D Generator — Multi-Format Spec Ingestion & Upload Screen (v2 Enhanced)
- * Supports PDF, DOCX, XLSX, CSV, PPTX with robust error handling, part deletion, and duplicate guards.
- */
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
@@ -90,6 +85,22 @@ export default function SpecUploadPage() {
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleCancel = () => {
+    setSelectedFiles([]);
+    setPartName('');
+    setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const formatFileSize = (bytes) => {
+    if (!bytes) return '0 B';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
   const handleUploadAndExtract = async () => {
     if (selectedFiles.length === 0) {
       setError('Please select at least one technical specification document.');
@@ -140,40 +151,67 @@ export default function SpecUploadPage() {
     }
   };
 
-  const getFormatIcon = (filename) => {
+  const getFileBadgeClass = (filename) => {
     const ext = filename.split('.').pop().toLowerCase();
-    if (ext === 'pdf') return '📕';
-    if (['docx', 'doc'].includes(ext)) return '📘';
-    if (['xlsx', 'xls', 'csv'].includes(ext)) return '📊';
-    if (['pptx', 'ppt'].includes(ext)) return '📙';
-    return '📄';
+    if (ext === 'pdf') return 'dribbble-badge-pdf';
+    if (['docx', 'doc'].includes(ext)) return 'dribbble-badge-docx';
+    if (['xlsx', 'xls', 'csv', 'tsv'].includes(ext)) return 'dribbble-badge-xlsx';
+    if (['pptx', 'ppt'].includes(ext)) return 'dribbble-badge-pptx';
+    return 'dribbble-badge-doc';
+  };
+
+  const getFileExtLabel = (filename) => {
+    const ext = filename.split('.').pop().toUpperCase();
+    return ext.length > 4 ? ext.substring(0, 4) : ext;
   };
 
   return (
-    <div className="spec-upload-page">
-      <div className="page-header">
-        <h1>Technical Specification Ingestion</h1>
-        <p>Upload engineering specification sheets (PDF, DOCX, XLSX, CSV, PPTX) to extract exact parametric dimensions with zero hallucination.</p>
-      </div>
-
+    <div className="spec-upload-page-wrapper">
+      {/* Alert Banners */}
       {error && (
-        <div className="alert alert-error" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>⚠️ {error}</span>
-          <button className="btn-icon" onClick={() => setError(null)}>✕</button>
+        <div className="dribbble-alert dribbble-alert-error">
+          <div className="dribbble-alert-content">
+            <span className="dribbble-alert-icon">⚠️</span>
+            <span>{error}</span>
+          </div>
+          <button className="dribbble-alert-close" onClick={() => setError(null)}>✕</button>
         </div>
       )}
 
       {warningMessage && (
-        <div className="alert" style={{ background: 'rgba(245, 158, 11, 0.15)', border: '1px solid #f59e0b', color: '#fcd34d' }}>
-          ℹ️ {warningMessage}
+        <div className="dribbble-alert dribbble-alert-warning">
+          <div className="dribbble-alert-content">
+            <span className="dribbble-alert-icon">ℹ️</span>
+            <span>{warningMessage}</span>
+          </div>
+          <button className="dribbble-alert-close" onClick={() => setWarningMessage(null)}>✕</button>
         </div>
       )}
 
-      <div className="spec-upload-card">
-        <div className="form-group" style={{ marginBottom: '20px' }}>
-          <label>Machine / Part Name</label>
+      {/* Main Dribbble Style Upload Card */}
+      <div className="dribbble-upload-card">
+        {/* Top Header with Title and Close X */}
+        <div className="dribbble-card-header">
+          <h2 className="dribbble-card-title">Upload Files</h2>
+          <button
+            type="button"
+            className="dribbble-close-btn"
+            onClick={handleCancel}
+            title="Clear and reset"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Optional Part Name Spec Input */}
+        <div className="dribbble-input-row">
+          <label className="dribbble-input-label">Part / Assembly Identifier</label>
           <input
             type="text"
+            className="dribbble-text-input"
             placeholder="e.g. Hydraulic Cylinder HYD-400, Drive Shaft, Flange"
             value={partName}
             onChange={(e) => setPartName(e.target.value)}
@@ -183,7 +221,7 @@ export default function SpecUploadPage() {
 
         {/* Drag and Drop Zone */}
         <div
-          className={`drop-zone ${isDragging ? 'drop-zone--active' : ''}`}
+          className={`dribbble-drop-zone ${isDragging ? 'dribbble-drop-zone--active' : ''}`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -197,93 +235,144 @@ export default function SpecUploadPage() {
             style={{ display: 'none' }}
             onChange={handleFileSelect}
           />
-          <div className="drop-zone-content">
-            <div className="drop-icon" style={{ fontSize: '2.5rem' }}>📁</div>
-            <div className="drop-text">Drag & drop technical documents here, or click to browse</div>
-            <div className="drop-hint">Supported formats: PDF (Text + Scanned/OCR), DOCX, XLSX, CSV, PPTX (Max 50MB per file)</div>
+
+          {/* Cloud Upload Icon */}
+          <div className="dribbble-cloud-icon-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+              <path d="M12 12v9" />
+              <path d="m8 16 4-4 4 4" />
+            </svg>
           </div>
+
+          {/* Prompt Texts */}
+          <p className="dribbble-drop-main-text">
+            Drag and drop your file here or <span className="dribbble-browse-link">browse files</span>
+          </p>
+          <p className="dribbble-drop-sub-text">
+            PDF, JPG, PNG, DOCX, XLSX up to 50 MB
+          </p>
         </div>
 
-        {/* Selected Files Staging List */}
+        {/* Staged Files List (Exact Dribbble Style) */}
         {selectedFiles.length > 0 && (
-          <div className="file-section">
-            <h3>Staged Documents ({selectedFiles.length})</h3>
-            <div className="file-list">
-              {selectedFiles.map((file, idx) => (
-                <div key={idx} className="file-item">
-                  <span className="file-icon">{getFormatIcon(file.name)}</span>
-                  <span className="file-name">{file.name}</span>
-                  <span className="file-size">{(file.size / 1024).toFixed(1)} KB</span>
-                  <button
-                    type="button"
-                    className="btn-icon btn-danger"
-                    onClick={() => removeFile(idx)}
-                    disabled={uploading}
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
+          <div className="dribbble-files-list">
+            {selectedFiles.map((file, idx) => (
+              <div key={idx} className="dribbble-file-row">
+                <div className="dribbble-file-left">
+                  {/* File Badge */}
+                  <div className={`dribbble-file-badge ${getFileBadgeClass(file.name)}`}>
+                    <div className="dribbble-file-badge-fold" />
+                    <span className="dribbble-file-badge-text">{getFileExtLabel(file.name)}</span>
+                  </div>
 
-            {uploading && (
-              <div className="upload-progress-container" style={{ margin: '20px 0' }}>
-                <div className="progress-bar-track" style={{ height: '8px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div
-                    className="progress-bar-fill"
-                    style={{ height: '100%', width: `${uploadProgress}%`, background: 'var(--accent-blue)', transition: 'width 0.3s ease' }}
-                  />
+                  {/* File Meta */}
+                  <div className="dribbble-file-details">
+                    <div className="dribbble-file-name" title={file.name}>
+                      {file.name}
+                    </div>
+                    <div className="dribbble-file-size">
+                      {formatFileSize(file.size)}
+                    </div>
+                  </div>
                 </div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--accent-blue)', marginTop: '8px', fontWeight: '500' }}>
-                  ⏳ {statusMessage}
-                </div>
+
+                {/* Trash Button */}
+                <button
+                  type="button"
+                  className="dribbble-trash-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFile(idx);
+                  }}
+                  disabled={uploading}
+                  title="Remove file"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    <line x1="10" y1="11" x2="10" y2="17" />
+                    <line x1="14" y1="11" x2="14" y2="17" />
+                  </svg>
+                </button>
               </div>
-            )}
+            ))}
+          </div>
+        )}
 
-            <div className="page-actions" style={{ marginTop: '16px' }}>
-              <button
-                type="button"
-                className="btn-primary"
-                style={{ width: '100%', padding: '14px', fontSize: '1rem' }}
-                onClick={handleUploadAndExtract}
-                disabled={uploading}
-              >
-                {uploading ? 'Processing Multi-Format Extraction...' : '🚀 Ingest & Extract Technical Specifications'}
-              </button>
+        {/* Uploading Progress */}
+        {uploading && (
+          <div className="dribbble-progress-section">
+            <div className="dribbble-progress-track">
+              <div
+                className="dribbble-progress-bar"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+            <div className="dribbble-progress-status">
+              <span className="dribbble-spinner-mini" />
+              <span>{statusMessage}</span>
             </div>
           </div>
         )}
+
+        {/* Footer Action Buttons */}
+        <div className="dribbble-card-footer">
+          <button
+            type="button"
+            className="dribbble-btn-cancel"
+            onClick={handleCancel}
+            disabled={uploading}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="dribbble-btn-attach"
+            onClick={handleUploadAndExtract}
+            disabled={uploading || selectedFiles.length === 0}
+          >
+            {uploading ? 'Attaching...' : 'Attach Files'}
+          </button>
+        </div>
       </div>
 
-      {/* Recent Parts Library */}
-      <div className="recent-parts-section" style={{ marginTop: '40px' }}>
-        <h2 style={{ fontSize: '1.2rem', marginBottom: '16px', color: 'var(--text-heading)' }}>Recent Parts Library</h2>
+      {/* Recent Ingested Parts Library (Clean Card Layout) */}
+      <div className="dribbble-recent-section">
+        <div className="dribbble-recent-header">
+          <h3>Ingested Spec Library</h3>
+          <span className="dribbble-recent-count">{recentParts.length} Parts</span>
+        </div>
+
         {loadingParts ? (
-          <div style={{ padding: '20px', color: 'var(--text-muted)' }}>
-            <span className="spinner" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '8px' }} />
-            Loading existing parts...
+          <div className="dribbble-loading-state">
+            <span className="dribbble-spinner-mini" /> Loading existing parts...
           </div>
         ) : recentParts.length === 0 ? (
-          <p style={{ color: 'var(--text-muted)' }}>No parts ingested yet. Upload your first specification sheet above.</p>
+          <div className="dribbble-empty-state">
+            No specifications uploaded yet. Attach your first spec sheet above.
+          </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+          <div className="dribbble-parts-grid">
             {recentParts.map((p) => (
               <div
                 key={p.id}
-                className="component-card"
-                style={{ padding: '16px', cursor: 'pointer', transition: 'all 0.2s ease', position: 'relative' }}
+                className="dribbble-part-card"
                 onClick={() => navigate(`/specs/review/${p.id}`)}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <strong style={{ color: 'var(--text-heading)', fontSize: '1rem' }}>{p.name}</strong>
-                  <span className={`file-status status--${p.status}`}>{p.status}</span>
+                <div className="dribbble-part-top">
+                  <span className="dribbble-part-title">{p.name}</span>
+                  <span className={`dribbble-status-badge dribbble-status-${p.status}`}>
+                    {p.status}
+                  </span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Type: <span style={{ color: 'var(--accent-blue)' }}>{p.part_type || 'Auto-Detect'}</span>
+                <div className="dribbble-part-meta">
+                  Type: <strong>{p.part_type || 'Auto-Detect'}</strong>
                 </div>
-                <div style={{ marginTop: '14px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <div className="dribbble-part-actions">
                   <button
-                    className="btn-sm btn-edit"
+                    className="dribbble-btn-subtle"
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/specs/review/${p.id}`);
@@ -292,7 +381,7 @@ export default function SpecUploadPage() {
                     📋 Review Specs
                   </button>
                   <button
-                    className="btn-sm btn-confirm"
+                    className="dribbble-btn-subtle dribbble-btn-accent"
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/specs/viewer/${p.id}`);
@@ -301,13 +390,12 @@ export default function SpecUploadPage() {
                     ⚛ 3D Hologram
                   </button>
                   <button
-                    className="btn-sm btn-cancel"
-                    style={{ marginLeft: 'auto' }}
+                    className="dribbble-btn-delete"
                     onClick={(e) => handleDeletePart(p.id, p.name, e)}
                     disabled={deletingPartId === p.id}
-                    title="Delete part and all associated data"
+                    title="Delete part"
                   >
-                    {deletingPartId === p.id ? 'Deleting...' : '🗑️'}
+                    {deletingPartId === p.id ? '...' : '🗑️'}
                   </button>
                 </div>
               </div>
@@ -318,3 +406,4 @@ export default function SpecUploadPage() {
     </div>
   );
 }
+

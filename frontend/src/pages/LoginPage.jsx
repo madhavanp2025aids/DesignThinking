@@ -1,15 +1,18 @@
 /**
- * HYDAC Spec-to-3D Generator — Login / Signup / Email Verification Screen (Part 8)
- * Features:
- * - Prominent "Sign In" vs "Create Account" tab switcher
- * - 6-digit email OTP verification screen
- * - 60-second resend rate-limit cooldown
- * - Clean error recovery with instant "Create Account" trigger
+ * HYDAC Spec-to-3D Generator — Login / Signup Screen
+ * Integrates Firebase Authentication (Email/Password & Session Persistence)
+ * with user-friendly error mapping, tab switcher, and existing UI styling.
  */
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
+import {
+  auth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  mapFirebaseAuthError,
+} from '../firebase';
 
 export default function LoginPage() {
   const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'verify'
@@ -39,22 +42,60 @@ export default function LoginPage() {
     setInfoMessage('');
     setLoading(true);
 
+    const emailClean = email.trim().toLowerCase();
+
     try {
       if (mode === 'signup') {
-        const res = await api.signup(email, password);
-        setMode('verify');
-        setCooldown(60);
-        setInfoMessage(res.message || `Verification code sent to ${email}`);
-      } else if (mode === 'login') {
-        await api.login(email, password);
+        // 1. Authenticate with Firebase Auth
+        let firebaseUser = null;
+        try {
+          const userCred = await createUserWithEmailAndPassword(auth, emailClean, password);
+          firebaseUser = userCred.user;
+          const idToken = await firebaseUser.getIdToken();
+          api.setToken(idToken);
+        } catch (fbErr) {
+          // If Firebase account already exists or has an auth error, handle cleanly
+          const friendlyMsg = mapFirebaseAuthError(fbErr);
+          throw new Error(friendlyMsg);
+        }
+
+        // 2. Synchronize with backend database
+        try {
+          await api.signup(emailClean, password);
+        } catch (backendErr) {
+          // Backend user may already exist or be provisioned
+        }
+
         navigate('/specs/upload');
+      } else if (mode === 'login') {
+        // 1. Authenticate with Firebase Auth
+        let firebaseSuccess = false;
+        try {
+          const userCred = await signInWithEmailAndPassword(auth, emailClean, password);
+          const idToken = await userCred.user.getIdToken();
+          api.setToken(idToken);
+          firebaseSuccess = true;
+        } catch (fbErr) {
+          // If Firebase failed, fallback to checking backend credentials or map error
+          try {
+            await api.login(emailClean, password);
+            firebaseSuccess = true;
+          } catch (backendErr) {
+            const friendlyMsg = mapFirebaseAuthError(fbErr);
+            throw new Error(friendlyMsg);
+          }
+        }
+
+        if (firebaseSuccess) {
+          navigate('/specs/upload');
+        }
       } else if (mode === 'verify') {
         if (!otpCode.trim() || otpCode.trim().length < 6) {
           setError('Please enter the full 6-digit verification code.');
           setLoading(false);
           return;
         }
-        await api.verifyEmail(email, otpCode.trim());
+        await api.verifyEmail(emailClean, otpCode.trim());
         navigate('/specs/upload');
       }
     } catch (err) {
@@ -77,7 +118,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await api.resendVerificationCode(email);
+      const res = await api.resendVerificationCode(email.trim().toLowerCase());
       setCooldown(60);
       setInfoMessage(res.message || 'A new verification code has been dispatched.');
     } catch (err) {
@@ -256,9 +297,9 @@ export default function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minimum 8 characters"
+                  placeholder="Minimum 6 characters"
                   required
-                  minLength={8}
+                  minLength={6}
                   autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                 />
               </div>
@@ -299,7 +340,7 @@ export default function LoginPage() {
               )}
 
               <button type="submit" className="btn-primary" disabled={loading} style={{ marginTop: '6px' }}>
-                {loading ? 'Processing…' : mode === 'signup' ? 'Create Account & Send Code' : 'Sign In'}
+                {loading ? 'Processing…' : mode === 'signup' ? 'Create Account' : 'Sign In'}
               </button>
 
               <div style={{ textAlign: 'center', marginTop: '16px' }}>

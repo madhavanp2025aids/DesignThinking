@@ -598,6 +598,618 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   DRIBBLE DAILY UI #011 — FLASH MESSAGE & FILE UPLOAD REDESIGN
+   ══════════════════════════════════════════════════════════════════ */
+
+.spec-upload-page-wrapper {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Alerts ── */
+.dribbble-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  animation: dribbbleFadeIn 0.3s ease;
+}
+
+.dribbble-alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.dribbble-alert-warning {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+}
+
+.dribbble-alert-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dribbble-alert-close {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  padding: 2px 6px;
+}
+
+.dribbble-alert-close:hover {
+  opacity: 1;
+}
+
+/* ── Upload Card ── */
+.dribbble-upload-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px 28px;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 0 1px 1px rgba(0, 0, 0, 0.04);
+  border: 1px solid #eef2f6;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.dribbble-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.dribbble-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.dribbble-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.dribbble-close-btn:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+/* ── Optional Input Row ── */
+.dribbble-input-row {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dribbble-input-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dribbble-text-input {
+  width: 100%;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: #1e293b;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.dribbble-text-input:focus {
+  background: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.dribbble-text-input::placeholder {
+  color: #94a3b8;
+}
+
+/* ── Drop Zone ── */
+.dribbble-drop-zone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 38px 24px;
+  background: #fafbfc;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.22s ease-in-out;
+  user-select: none;
+}
+
+.dribbble-drop-zone:hover,
+.dribbble-drop-zone--active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  border-style: dashed;
+}
+
+.dribbble-cloud-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.dribbble-drop-zone:hover .dribbble-cloud-icon-circle,
+.dribbble-drop-zone--active .dribbble-cloud-icon-circle {
+  transform: translateY(-2px) scale(1.06);
+  background: #dbeafe;
+}
+
+.dribbble-drop-main-text {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.dribbble-browse-link {
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.dribbble-browse-link:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+.dribbble-drop-sub-text {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ── Staged Files List ── */
+.dribbble-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.dribbble-file-row {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  transition: all 0.2s ease;
+  animation: dribbbleSlideDown 0.25s ease;
+}
+
+.dribbble-file-row:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.dribbble-file-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 1;
+}
+
+/* File Badge Pill */
+.dribbble-file-badge {
+  width: 38px;
+  height: 44px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.dribbble-file-badge-fold {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 10px 10px 0;
+  border-color: transparent rgba(255, 255, 255, 0.5) transparent transparent;
+}
+
+.dribbble-file-badge-text {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.dribbble-badge-pdf {
+  background: #ef4444;
+}
+
+.dribbble-badge-docx {
+  background: #2563eb;
+}
+
+.dribbble-badge-xlsx {
+  background: #10b981;
+}
+
+.dribbble-badge-pptx {
+  background: #f97316;
+}
+
+.dribbble-badge-doc {
+  background: #6366f1;
+}
+
+.dribbble-file-details {
+  min-width: 0;
+  flex: 1;
+}
+
+.dribbble-file-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dribbble-file-size {
+  font-size: 0.76rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.dribbble-trash-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dribbble-trash-btn:hover {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+/* ── Progress Bar ── */
+.dribbble-progress-section {
+  margin-top: 18px;
+}
+
+.dribbble-progress-track {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.dribbble-progress-bar {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 6px;
+  transition: width 0.35s ease;
+}
+
+.dribbble-progress-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+/* ── Card Footer Actions ── */
+.dribbble-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.dribbble-btn-cancel {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dribbble-btn-cancel:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.dribbble-btn-attach {
+  background: #2563eb;
+  border: none;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transition: all 0.2s ease;
+}
+
+.dribbble-btn-attach:hover:not(:disabled) {
+  background: #1d4ed8;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}
+
+.dribbble-btn-attach:disabled,
+.dribbble-btn-cancel:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Recent Ingested Library ── */
+.dribbble-recent-section {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px 28px;
+  border: 1px solid #eef2f6;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+}
+
+.dribbble-recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.dribbble-recent-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.dribbble-recent-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.dribbble-loading-state,
+.dribbble-empty-state {
+  padding: 24px 0;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.dribbble-parts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.dribbble-part-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dribbble-part-card:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.dribbble-part-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dribbble-part-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dribbble-status-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.dribbble-status-pending,
+.dribbble-status-incomplete,
+.dribbble-status-no_specs_found {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.dribbble-status-parsing,
+.dribbble-status-generating {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.dribbble-status-parsed,
+.dribbble-status-ready_for_generation,
+.dribbble-status-success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.dribbble-status-error,
+.dribbble-status-failed_missing_params,
+.dribbble-status-failed_generation_error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.dribbble-part-meta {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.dribbble-part-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.dribbble-btn-subtle {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dribbble-btn-subtle:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.dribbble-btn-accent {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.dribbble-btn-accent:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.dribbble-btn-delete {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  font-size: 0.9rem;
+  margin-left: auto;
+  border-radius: 4px;
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+
+.dribbble-btn-delete:hover {
+  opacity: 1;
+  background: #fee2e2;
+}
+
+.dribbble-spinner-mini {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(37, 99, 235, 0.2);
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  display: inline-block;
+  animation: dribbbleSpin 0.6s linear infinite;
+}
+
+@keyframes dribbbleSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes dribbbleFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dribbbleSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
 /* ── Alerts ─────────────────────────────────────────────── */
 
 .alert {
