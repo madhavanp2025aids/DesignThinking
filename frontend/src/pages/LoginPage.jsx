@@ -55,15 +55,22 @@ export default function LoginPage() {
           api.setToken(idToken);
         } catch (fbErr) {
           // If Firebase account already exists or has an auth error, handle cleanly
-          const friendlyMsg = mapFirebaseAuthError(fbErr);
-          throw new Error(friendlyMsg);
+          if (fbErr.code !== 'auth/api-key-not-valid') {
+            const friendlyMsg = mapFirebaseAuthError(fbErr);
+            throw new Error(friendlyMsg);
+          } else {
+            console.warn('Firebase API key missing, relying on backend only.');
+          }
         }
 
         // 2. Synchronize with backend database
         try {
           await api.signup(emailClean, password);
         } catch (backendErr) {
-          // Backend user may already exist or be provisioned
+          if (!api.getToken()) {
+            throw backendErr;
+          }
+          // If we have a token (Firebase succeeded), we can ignore if backend says user exists
         }
 
         navigate('/specs/upload');
@@ -81,8 +88,12 @@ export default function LoginPage() {
             await api.login(emailClean, password);
             firebaseSuccess = true;
           } catch (backendErr) {
-            const friendlyMsg = mapFirebaseAuthError(fbErr);
-            throw new Error(friendlyMsg);
+            if (fbErr.code === 'auth/api-key-not-valid') {
+              throw backendErr;
+            } else {
+              const friendlyMsg = mapFirebaseAuthError(fbErr);
+              throw new Error(friendlyMsg);
+            }
           }
         }
 

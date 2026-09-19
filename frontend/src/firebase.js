@@ -71,6 +71,8 @@ export function mapFirebaseAuthError(err) {
       return 'Google sign-in popup was closed before completing.';
     case 'auth/operation-not-allowed':
       return 'This sign-in method is not enabled in the Firebase console.';
+    case 'auth/api-key-not-valid':
+      return 'Firebase is not configured correctly. Relying on local backend authentication.';
     default:
       return err.message || 'Authentication failed. Please try again.';
   }
