@@ -244,3 +244,15 @@ class SpecProcessingStatus(BaseModel):
     unavailable_fields: int
     status: str  # processing, complete, incomplete, error
 
+
+class BatchParametersUpdate(BaseModel):
+    """Batch parameter synchronization from Live Dimension Tuner."""
+    bore: Optional[float] = None
+    rod: Optional[float] = None
+    stroke: Optional[float] = None
+    outer_diameter: Optional[float] = None
+    pressure: Optional[float] = None
+    flange_width: Optional[float] = None
+    port_size: Optional[float] = None
+    parameters: Optional[dict] = None
+

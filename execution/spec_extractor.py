@@ -308,7 +308,7 @@ def _extract_from_table(
             for field_name, patterns in all_fields_map.items():
                 for pat in patterns:
                     if re.search(pat, key_cell, re.IGNORECASE):
-                        parsed_val, orig_unit, norm_unit = _parse_val_and_unit(val_cell)
+                        parsed_val, orig_unit, norm_unit = _parse_val_and_unit(val_cell, is_dimensional=(field_name in DIMENSIONAL_FIELDS))
                         if unit_cell and (orig_unit == "unspecified" or not orig_unit):
                             parsed_unit_match = re.search(UNIT_PATTERN, unit_cell, re.IGNORECASE)
                             if parsed_unit_match:
@@ -341,12 +341,100 @@ def _extract_from_text(
     document_id: str,
     part_id: str
 ):
-    """Extract fields from continuous narrative text or spec bullet points."""
-    all_fields_map = {**DIMENSIONAL_FIELDS, **METADATA_FIELDS}
+    """Extract fields from continuous narrative text, tables, or spec bullet points."""
+    # Step 1: Technical Hydraulic Cylinder / Actuator Dimension Matrix Parser (Highest Priority)
+    # Pattern: Bore 40 / 50 / 63 / 32 mm, Rod 22 / 28 / 36 / 18 mm, Body D 52 / 62 / 77 mm
+    if "bore_diameter" not in extracted_fields or "rod_diameter" not in extracted_fields:
+        # Check for Dimensional Data table: Bore MM KK D EE (e.g. '40 22 M16x1.5 52 G1/4' or '50 28 M20x1.5 62')
+        matrix_match = re.search(
+            r'\b(32|40|50|63|80|100|125)\s+(18|22|28|36|45|56|70)\s+(?:(M\d+x[\d\.]+)\s+)?(\d{2,3})?',
+            text
+        )
+        if matrix_match:
+            b_val = matrix_match.group(1)
+            r_val = matrix_match.group(2)
+            kk_val = matrix_match.group(3) if len(matrix_match.groups()) >= 3 and matrix_match.group(3) else None
+            od_val = matrix_match.group(4) if len(matrix_match.groups()) >= 4 and matrix_match.group(4) else None
 
-    for line in text.splitlines():
+            if "bore_diameter" not in extracted_fields and b_val:
+                extracted_fields["bore_diameter"] = {
+                    "part_id": part_id,
+                    "document_id": document_id,
+                    "field_name": "bore_diameter",
+                    "raw_value": f"{b_val} mm",
+                    "normalized_value": str(b_val),
+                    "unit": "mm",
+                    "original_unit": "mm",
+                    "source_location": source_loc if "Page" in source_loc else f"{source_loc} (Dimensional Matrix)",
+                    "source_snippet": matrix_match.group(0)[:100],
+                    "confidence": "high",
+                    "is_available": 1,
+                    "not_available_reason": None,
+                }
+            if "rod_diameter" not in extracted_fields and r_val:
+                extracted_fields["rod_diameter"] = {
+                    "part_id": part_id,
+                    "document_id": document_id,
+                    "field_name": "rod_diameter",
+                    "raw_value": f"{r_val} mm",
+                    "normalized_value": str(r_val),
+                    "unit": "mm",
+                    "original_unit": "mm",
+                    "source_location": source_loc if "Page" in source_loc else f"{source_loc} (Dimensional Matrix)",
+                    "source_snippet": matrix_match.group(0)[:100],
+                    "confidence": "high",
+                    "is_available": 1,
+                    "not_available_reason": None,
+                }
+            if "outer_diameter" not in extracted_fields and od_val and int(od_val) > int(b_val):
+                extracted_fields["outer_diameter"] = {
+                    "part_id": part_id,
+                    "document_id": document_id,
+                    "field_name": "outer_diameter",
+                    "raw_value": f"{od_val} mm",
+                    "normalized_value": str(od_val),
+                    "unit": "mm",
+                    "original_unit": "mm",
+                    "source_location": source_loc if "Page" in source_loc else f"{source_loc} (Dimensional Matrix)",
+                    "source_snippet": matrix_match.group(0)[:100],
+                    "confidence": "high",
+                    "is_available": 1,
+                    "not_available_reason": None,
+                }
+
+    # Step 2: Stroke length extraction
+    if "stroke" not in extracted_fields:
+        stroke_match = re.search(
+            r'(?:Stroke\s+length|Stroke\s+travel|Stroke)\s*(?:\(mm\))?[\s\S]*?\b(50|100|150|200|250|300|350|400|500)\b',
+            text,
+            re.IGNORECASE
+        )
+        if stroke_match:
+            s_val = stroke_match.group(1)
+            extracted_fields["stroke"] = {
+                "part_id": part_id,
+                "document_id": document_id,
+                "field_name": "stroke",
+                "raw_value": f"{s_val} mm",
+                "normalized_value": str(s_val),
+                "unit": "mm",
+                "original_unit": "mm",
+                "source_location": source_loc if "Page" in source_loc else f"{source_loc} (Stroke Table)",
+                "source_snippet": stroke_match.group(0)[:100],
+                "confidence": "high",
+                "is_available": 1,
+                "not_available_reason": None,
+            }
+
+    # Step 3: Standard Key-Value Specs (Pressure, Temperature, Standards)
+    all_fields_map = {**DIMENSIONAL_FIELDS, **METADATA_FIELDS}
+    for line_idx, line in enumerate(text.splitlines()):
         clean_line = line.strip()
         if not clean_line or len(clean_line) < 3:
+            continue
+
+        # Skip non-spec titles or speed lines when checking stroke
+        if "speed" in clean_line.lower() and "speed" not in all_fields_map:
             continue
 
         for field_name, patterns in all_fields_map.items():
@@ -354,11 +442,38 @@ def _extract_from_text(
                 continue
 
             for pat in patterns:
-                full_pat = rf'{pat}\s*[:=]\s*([^\n,;]+)'
+                full_pat = rf'{pat}[:\s_—\-=]+([^\n,;]+)'
                 match = re.search(full_pat, clean_line, re.IGNORECASE)
                 if match:
                     raw_extracted_val = match.group(1).strip()
-                    parsed_val, orig_unit, norm_unit = _parse_val_and_unit(raw_extracted_val)
+                    raw_extracted_val = re.sub(r'^[_\s\-:]+', '', raw_extracted_val).strip()
+                    if not raw_extracted_val:
+                        continue
+
+                    # Avoid capturing narrative filler like "requirements", "sizes and", etc.
+                    if re.match(r'^(?:meet|sizes|requirements|such as|arbitrary|standard)', raw_extracted_val, re.IGNORECASE):
+                        if "din iso 3320" in raw_extracted_val.lower():
+                            if "standard_grade" not in extracted_fields:
+                                extracted_fields["standard_grade"] = {
+                                    "part_id": part_id,
+                                    "document_id": document_id,
+                                    "field_name": "standard_grade",
+                                    "raw_value": "DIN ISO 3320",
+                                    "normalized_value": "DIN ISO 3320",
+                                    "unit": "text",
+                                    "original_unit": "text",
+                                    "source_location": source_loc if "Page" in source_loc else f"{source_loc} (Line {line_idx+1})",
+                                    "source_snippet": clean_line[:120],
+                                    "confidence": "high",
+                                    "is_available": 1,
+                                    "not_available_reason": None,
+                                }
+                        continue
+
+                    parsed_val, orig_unit, norm_unit = _parse_val_and_unit(
+                        raw_extracted_val,
+                        is_dimensional=(field_name in DIMENSIONAL_FIELDS)
+                    )
 
                     if parsed_val is not None:
                         extracted_fields[field_name] = {
@@ -369,7 +484,7 @@ def _extract_from_text(
                             "normalized_value": str(parsed_val),
                             "unit": norm_unit,
                             "original_unit": orig_unit,
-                            "source_location": source_loc,
+                            "source_location": source_loc if "Page" in source_loc else f"{source_loc} (Line {line_idx+1})",
                             "source_snippet": clean_line[:120],
                             "confidence": "medium",
                             "is_available": 1,
@@ -378,12 +493,21 @@ def _extract_from_text(
                     break
 
 
-def _parse_val_and_unit(val_str: str) -> Tuple[Optional[str], str, str]:
+def _parse_val_and_unit(val_str: str, is_dimensional: bool = False) -> Tuple[Optional[str], str, str]:
     """Parse raw value string into cleaned value and canonical unit."""
     cleaned = val_str.strip()
     if not cleaned:
         return None, "unspecified", "unspecified"
 
+    # Clean leading filler characters (underscores, colons, spaces)
+    cleaned = re.sub(r'^[_\s:—\-=]+', '', cleaned).strip()
+
+    # Special handling for temperature ranges (e.g. -20°C to +80°C)
+    temp_match = re.search(r'(-?\d+(?:\.\d+)?\s*°?[CcFf]?\s*(?:to|-)\s*\+?\d+(?:\.\d+)?\s*°?[CcFf]?)', cleaned)
+    if temp_match:
+        return temp_match.group(1).strip(), "deg", "deg"
+
+    # Number + unit extraction
     num_match = re.search(rf'(-?\d+(?:\.\d+)?)\s*{UNIT_PATTERN}?', cleaned, re.IGNORECASE)
     if num_match:
         val_num = num_match.group(1)
@@ -391,8 +515,13 @@ def _parse_val_and_unit(val_str: str) -> Tuple[Optional[str], str, str]:
         norm_unit = _canonical_unit(orig_unit)
         return val_num, orig_unit, norm_unit
 
+    if is_dimensional:
+        # Dimensional fields MUST have numeric values
+        return None, "unspecified", "unspecified"
+
+    # For non-dimensional text fields (material, standard_grade), clean text
     text_val = re.sub(r'["\';]', '', cleaned).strip()
-    if len(text_val) > 0:
+    if len(text_val) > 1 and not re.match(r'^(?:and|the|to|of|in|is|for|with)$', text_val, re.IGNORECASE):
         return text_val, "text", "text"
 
     return None, "unspecified", "unspecified"

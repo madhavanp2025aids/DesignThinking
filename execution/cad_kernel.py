@@ -31,7 +31,9 @@ def export_step_model(template: str, parameters: Dict[str, Any], output_path: st
     """
     Generate an ISO 10303-21 STEP AP214 CAD model from parametric parameters.
     """
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    dirname = os.path.dirname(output_path)
+    if dirname:
+        os.makedirs(dirname, exist_ok=True)
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
 
     # Generate valid STEP AP214 content
@@ -47,7 +49,9 @@ def export_iges_model(template: str, parameters: Dict[str, Any], output_path: st
     """
     Generate an IGES 5.3 CAD model from parametric parameters.
     """
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    dirname = os.path.dirname(output_path)
+    if dirname:
+        os.makedirs(dirname, exist_ok=True)
     iges_content = _generate_iges_content(template, parameters)
 
     with open(output_path, "w", encoding="utf-8") as f:

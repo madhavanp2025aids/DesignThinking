@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "hydac-dev-secret-key-change-in-production"
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "480"))
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
 def hash_password(password: str) -> str:
@@ -63,11 +63,25 @@ def decode_access_token(token: str) -> dict:
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    token: Optional[str] = None,
     db: Session = Depends(get_db),
 ) -> User:
-    """FastAPI dependency: extracts and validates the current user from JWT or Firebase token."""
-    payload = decode_access_token(credentials.credentials)
+    """FastAPI dependency: extracts and validates the current user from Bearer header or query token parameter."""
+    raw_token = None
+    if credentials and credentials.credentials:
+        raw_token = credentials.credentials
+    elif token and token.strip() and token.strip() not in ("null", "undefined"):
+        raw_token = token.strip()
+
+    if not raw_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication token required (via Bearer header or ?token= query parameter)",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    payload = decode_access_token(raw_token)
     user_id: Optional[str] = payload.get("sub") or payload.get("user_id")
     email: Optional[str] = payload.get("email")
 
@@ -94,3 +108,37 @@ def get_current_user(
             detail="User not found",
         )
     return user
+
+
+def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    token: Optional[str] = None,
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """Optional auth dependency: returns User if valid token is provided, or None if anonymous/public asset request."""
+    try:
+        raw_token = None
+        if credentials and credentials.credentials:
+            raw_token = credentials.credentials
+        elif token and token.strip() and token.strip() not in ("null", "undefined"):
+            raw_token = token.strip()
+
+        if not raw_token:
+            return None
+
+        payload = decode_access_token(raw_token)
+        user_id: Optional[str] = payload.get("sub") or payload.get("user_id")
+        email: Optional[str] = payload.get("email")
+
+        if user_id:
+            user = db.query(User).filter(User.id == user_id).first()
+            if user:
+                return user
+        if email:
+            user = db.query(User).filter(User.email == email.strip().lower()).first()
+            if user:
+                return user
+        return None
+    except Exception:
+        return None
+

@@ -1,12 +1,124 @@
 <!doctype html>
-<html lang="en">
+<html class="dark" lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <title>AeroSpec HUD — Spec-To-3D Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#004c69",
+              "surface-tint": "#2fd9f4",
+              "on-secondary-fixed": "#001e2c",
+              "on-tertiary": "#131e8c",
+              "background": "#10141a",
+              "inverse-surface": "#dfe2eb",
+              "on-secondary-container": "#00374d",
+              "secondary-fixed-dim": "#7bd0ff",
+              "primary-container": "#22d3ee",
+              "outline-variant": "#3c494c",
+              "on-primary": "#00363e",
+              "secondary": "#7bd0ff",
+              "surface-container": "#1c2026",
+              "tertiary": "#d8daff",
+              "on-primary-fixed-variant": "#004e5a",
+              "surface": "#10141a",
+              "surface-container-low": "#181c22",
+              "inverse-primary": "#006877",
+              "on-surface": "#dfe2eb",
+              "on-primary-fixed": "#001f25",
+              "primary": "#8aebff",
+              "tertiary-fixed-dim": "#bdc2ff",
+              "tertiary-container": "#b6bcff",
+              "surface-variant": "#31353c",
+              "on-tertiary-container": "#3842ab",
+              "primary-fixed-dim": "#2fd9f4",
+              "on-secondary": "#00354a",
+              "primary-fixed": "#a2eeff",
+              "surface-bright": "#353940",
+              "secondary-container": "#00a6e0",
+              "surface-container-highest": "#31353c",
+              "error": "#ffb4ab",
+              "inverse-on-surface": "#2d3137",
+              "on-error-container": "#ffdad6",
+              "error-container": "#93000a",
+              "outline": "#859397",
+              "surface-container-lowest": "#0a0e14",
+              "on-primary-container": "#005763",
+              "on-background": "#dfe2eb",
+              "secondary-fixed": "#c4e7ff",
+              "surface-dim": "#10141a",
+              "surface-container-high": "#262a31",
+              "on-surface-variant": "#bbc9cd",
+              "on-tertiary-fixed-variant": "#2f3aa3",
+              "on-tertiary-fixed": "#000767",
+              "tertiary-fixed": "#e0e0ff",
+              "on-error": "#690005"
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem"
+            },
+            spacing: {
+              "space-md": "0.75rem",
+              "space-sm": "0.5rem",
+              "space-xl": "1.5rem",
+              "margin-desktop": "2rem",
+              "gutter-desktop": "1.5rem",
+              "margin": "1rem",
+              "space-2xl": "2.5rem",
+              "space-xs": "0.25rem",
+              "gutter": "1rem",
+              "space-lg": "1rem"
+            },
+            fontFamily: {
+              "headline-lg": ["Space Grotesk", "sans-serif"],
+              "display-lg-mobile": ["Space Grotesk", "sans-serif"],
+              "label-md": ["Inter", "sans-serif"],
+              "label-caps": ["JetBrains Mono", "monospace"],
+              "display-lg": ["Space Grotesk", "sans-serif"],
+              "code-md": ["JetBrains Mono", "monospace"],
+              "headline-md": ["Space Grotesk", "sans-serif"],
+              "body-sm": ["Inter", "sans-serif"],
+              "body-lg": ["Inter", "sans-serif"],
+              "body-md": ["Inter", "sans-serif"],
+              "headline-sm": ["Space Grotesk", "sans-serif"],
+              "code-lg": ["JetBrains Mono", "monospace"],
+              "code-sm": ["JetBrains Mono", "monospace"]
+            },
+            fontSize: {
+              "headline-lg": ["28px", { lineHeight: "36px", letterSpacing: "-0.01em", fontWeight: "600" }],
+              "display-lg-mobile": ["30px", { lineHeight: "38px", letterSpacing: "-0.01em", fontWeight: "700" }],
+              "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.04em", fontWeight: "600" }],
+              "label-caps": ["11px", { lineHeight: "14px", letterSpacing: "0.08em", fontWeight: "700" }],
+              "display-lg": ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
+              "code-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }],
+              "headline-md": ["22px", { lineHeight: "28px", letterSpacing: "0em", fontWeight: "600" }],
+              "body-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.01em", fontWeight: "400" }],
+              "body-lg": ["16px", { lineHeight: "24px", letterSpacing: "0em", fontWeight: "400" }],
+              "body-md": ["14px", { lineHeight: "20px", letterSpacing: "0em", fontWeight: "400" }],
+              "headline-sm": ["18px", { lineHeight: "24px", letterSpacing: "0.01em", fontWeight: "500" }],
+              "code-lg": ["14px", { lineHeight: "20px", letterSpacing: "-0.01em", fontWeight: "500" }],
+              "code-sm": ["10px", { lineHeight: "14px", letterSpacing: "0.05em", fontWeight: "600" }]
+            }
+          }
+        }
+      };
+    </script>
   </head>
-  <body>
+  <body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

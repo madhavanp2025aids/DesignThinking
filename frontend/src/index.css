@@ -2,8 +2,7 @@
  * HYDAC Spec-to-3D Generator — Global Styles
  * Industrial / engineering-tool aesthetic. Dark neutral palette.
  */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 /* ── Reset & Foundation ─────────────────────────────────── */
 
@@ -14,56 +13,82 @@
 }
 
 :root {
-  /* Neutral industrial palette */
-  --bg-primary: #0f1117;
-  --bg-secondary: #161922;
-  --bg-card: #1c1f2e;
-  --bg-card-hover: #222640;
-  --bg-elevated: #252a3a;
-  --bg-input: #1a1d2b;
+  /* AeroSpec HUD Design System Tokens */
+  --surface: #10141a;
+  --surface-dim: #10141a;
+  --surface-bright: #353940;
+  --surface-container-lowest: #0a0e14;
+  --surface-container-low: #181c22;
+  --surface-container: #1c2026;
+  --surface-container-high: #262a31;
+  --surface-container-highest: #31353c;
+  
+  --on-surface: #dfe2eb;
+  --on-surface-variant: #bbc9cd;
+  --outline: #859397;
+  --outline-variant: #3c494c;
+  
+  --primary: #8aebff;
+  --primary-container: #22d3ee;
+  --on-primary: #00363e;
+  --on-primary-container: #005763;
+  
+  --secondary: #7bd0ff;
+  --secondary-container: #00a6e0;
+  --tertiary: #e4d6ff;
+  --tertiary-container: #cbb5ff;
+  
+  --error: #ffb4ab;
+  --error-crimson: #ef4444;
+  --emerald-green: #10b981;
+  --amber-alert: #f59e0b;
+  
+  /* Backgrounds */
+  --bg-main: #0a0e14;
+  --bg-primary: #0a0e14;
+  --bg-secondary: #0f1620;
+  --bg-card: rgba(15, 22, 32, 0.75);
+  --bg-card-hover: rgba(20, 30, 44, 0.85);
+  --bg-elevated: rgba(20, 30, 44, 0.9);
+  --bg-input: rgba(10, 14, 20, 0.85);
 
   /* Text */
-  --text-primary: #e2e8f0;
+  --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
-  --text-heading: #f1f5f9;
+  --text-heading: #ffffff;
 
   /* Accents */
-  --accent-blue: #3b82f6;
-  --accent-blue-hover: #2563eb;
-  --accent-blue-subtle: #1e3a5f;
-  --accent-green: #22c55e;
-  --accent-green-subtle: #14532d;
+  --accent-blue: #22d3ee;
+  --accent-blue-hover: #38bdf8;
+  --accent-blue-subtle: rgba(34, 211, 238, 0.15);
+  --accent-green: #10b981;
+  --accent-green-subtle: rgba(16, 185, 129, 0.15);
   --accent-red: #ef4444;
-  --accent-red-subtle: #7f1d1d;
+  --accent-red-subtle: rgba(239, 68, 68, 0.15);
   --accent-yellow: #f59e0b;
-  --accent-yellow-subtle: #78350f;
-  --accent-purple: #a78bfa;
+  --accent-yellow-subtle: rgba(245, 158, 11, 0.15);
+  --accent-purple: #8b5cf6;
 
   /* Borders */
-  --border-color: #2d3348;
-  --border-subtle: #1f2335;
+  --border-color: rgba(34, 211, 238, 0.2);
+  --border-subtle: rgba(148, 163, 184, 0.15);
 
   /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
 
   /* Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
 
-  /* Transitions */
-  --transition-fast: 120ms ease;
-  --transition-normal: 200ms ease;
-  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Font */
+  /* Fonts */
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Consolas', monospace;
 }
@@ -1968,5 +1993,2040 @@ body {
     transform: scale(0.9);
     box-shadow: 0 0 0 0 rgba(0, 240, 255, 0);
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   COCKPIT DARK ANALYTICS DASHBOARD (PAGE 2 — SPEC AUDIT & REVIEW)
+   ══════════════════════════════════════════════════════════════════ */
+
+.cockpit-dashboard-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #090a0f;
+  min-height: 100vh;
+  color: #e2e8f0;
+}
+
+/* ── Top Status Strip ── */
+.cockpit-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: rgba(18, 21, 31, 0.75);
+  border: 1px solid #1e2333;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.cockpit-system-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.cockpit-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.pulse-green {
+  background: #00f29d;
+  box-shadow: 0 0 8px #00f29d;
+  animation: cockpitGlow 2s infinite ease-in-out;
+}
+
+@keyframes cockpitGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+.cockpit-status-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.cockpit-status-value {
+  color: #00f29d;
+  font-weight: 600;
+}
+
+.cockpit-top-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.cockpit-divider {
+  color: #334155;
+}
+
+/* ── Main Header Row ── */
+.cockpit-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.cockpit-back-btn {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid #1e293b;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.cockpit-back-btn:hover {
+  background: #1e293b;
+  color: #ffffff;
+  border-color: #334155;
+}
+
+.cockpit-page-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.cockpit-badge-type {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: #60a5fa;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cockpit-page-subtitle {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.cockpit-page-subtitle code {
+  color: #94a3b8;
+  font-family: var(--font-mono);
+}
+
+.cockpit-status-pill {
+  color: #00f29d;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.cockpit-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cockpit-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cockpit-btn-secondary {
+  background: #141721;
+  border: 1px solid #232838;
+  color: #cbd5e1;
+}
+
+.cockpit-btn-secondary:hover:not(:disabled) {
+  background: #1a1e2b;
+  border-color: #333a4f;
+  color: #ffffff;
+}
+
+.cockpit-btn-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.cockpit-btn-danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ffffff;
+}
+
+.cockpit-btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: 1px solid #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(37, 99, 235, 0.35);
+}
+
+.cockpit-btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  box-shadow: 0 0 24px rgba(37, 99, 235, 0.55);
+  transform: translateY(-1px);
+}
+
+.cockpit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Generic Cockpit Card ── */
+.cockpit-card {
+  background: #12151f;
+  border: 1px solid #1e2333;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.cockpit-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cockpit-card-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.cockpit-filter-pill {
+  font-size: 0.75rem;
+  color: #64748b;
+  background: #181c29;
+  border: 1px solid #232838;
+  padding: 3px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ── Alert & Diff Banners ── */
+.cockpit-diff-banner {
+  background: rgba(30, 58, 138, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cockpit-diff-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cockpit-diff-tag {
+  font-size: 0.78rem;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: #94a3b8;
+}
+
+.cockpit-diff-tag strong {
+  color: #f59e0b;
+}
+
+.cockpit-conflict-banner {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── KPI Row ── */
+.cockpit-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.cockpit-kpi-card {
+  background: #12151f;
+  border: 1px solid #1e2333;
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.cockpit-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cockpit-kpi-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.8px;
+}
+
+.cockpit-sparkline {
+  filter: drop-shadow(0 0 6px rgba(0, 242, 157, 0.4));
+}
+
+.cockpit-kpi-val {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #f8fafc;
+  font-family: var(--font-mono);
+  margin: 10px 0 4px;
+  line-height: 1;
+}
+
+.cockpit-kpi-subval {
+  font-size: 1rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.cockpit-kpi-trend {
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.cockpit-kpi-trend span {
+  color: #00f29d;
+  font-weight: 600;
+}
+
+/* ── Middle 2-Column Grid ── */
+.cockpit-middle-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 16px;
+}
+
+/* Left Card: Spec Stability */
+.cockpit-stability-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cockpit-health-score-row {
+  margin: 6px 0 16px;
+}
+
+.cockpit-score-num {
+  font-size: 2.2rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+}
+
+.cockpit-btn-secondary:hover:not(:disabled) {
+  background: #1a1e2b;
+  border-color: #333a4f;
+  color: #ffffff;
+}
+
+.cockpit-btn-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.cockpit-btn-danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ffffff;
+}
+
+.cockpit-btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: 1px solid #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(37, 99, 235, 0.35);
+}
+
+.cockpit-btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  box-shadow: 0 0 24px rgba(37, 99, 235, 0.55);
+  transform: translateY(-1px);
+}
+
+.cockpit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Generic Cockpit Card ── */
+.cockpit-card {
+  background: #12151f;
+  border: 1px solid #1e2333;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.cockpit-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cockpit-card-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.cockpit-filter-pill {
+  font-size: 0.75rem;
+  color: #64748b;
+  background: #181c29;
+  border: 1px solid #232838;
+  padding: 3px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ── Alert & Diff Banners ── */
+.cockpit-diff-banner {
+  background: rgba(30, 58, 138, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cockpit-diff-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cockpit-diff-tag {
+  font-size: 0.78rem;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: #94a3b8;
+}
+
+.cockpit-diff-tag strong {
+  color: #f59e0b;
+}
+
+.cockpit-conflict-banner {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── KPI Row ── */
+.cockpit-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.cockpit-kpi-card {
+  background: #12151f;
+  border: 1px solid #1e2333;
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.cockpit-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cockpit-kpi-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.8px;
+}
+
+.cockpit-sparkline {
+  filter: drop-shadow(0 0 6px rgba(0, 242, 157, 0.4));
+}
+
+.cockpit-kpi-val {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #f8fafc;
+  font-family: var(--font-mono);
+  margin: 10px 0 4px;
+  line-height: 1;
+}
+
+.cockpit-kpi-subval {
+  font-size: 1rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.cockpit-kpi-trend {
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.cockpit-kpi-trend span {
+  color: #00f29d;
+  font-weight: 600;
+}
+
+/* ── Middle 2-Column Grid ── */
+.cockpit-middle-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 16px;
+}
+
+/* Left Card: Spec Stability */
+.cockpit-stability-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cockpit-health-score-row {
+  margin: 6px 0 16px;
+}
+
+.cockpit-score-num {
+  font-size: 2.2rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  display: block;
+  line-height: 1.1;
+  text-shadow: 0 0 16px rgba(0, 242, 157, 0.3);
+}
+
+.cockpit-score-sub {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Continuous Segmented Bar */
+.cockpit-segmented-bar {
+  display: flex;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #1a1e2b;
+  margin-bottom: 20px;
+}
+
+.bar-segment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.bar-critical { background: #ef4444; }
+.bar-conflict { background: #f97316; }
+.bar-single { background: #facc15; }
+.bar-verified { background: #00f29d; }
+
+/* Legend Grid */
+.cockpit-legend-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend-item {
+  display: grid;
+  grid-template-columns: 10px 1fr 45px 35px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+}
+
+.legend-dot {
+  width: 8px;
+  color: #64748b;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hpc-citation-modal {
+  max-width: 720px;
+}
+
+.hpc-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #192232;
+}
+
+.hpc-modal-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.hpc-modal-header h3 span {
+  color: #00f29d;
+}
+
+.hpc-close-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.hpc-close-btn:hover {
+  color: #ffffff;
+}
+
+.hpc-modal-body {
+  padding: 20px;
+}
+
+.hpc-modal-body label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #8da2bc;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.hpc-modal-body input[type="text"] {
+  width: 100%;
+  background: #06090e;
+  border: 1px solid #1e293b;
+  color: #ffffff;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.hpc-modal-body input[type="text"]:focus {
+  border-color: #00f29d;
+}
+
+.hpc-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid #192232;
+  background: #090e15;
+}
+
+.hpc-btn-sec {
+  background: #141b27;
+  border: 1px solid #1e293b;
+  color: #cbd5e1;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.hpc-btn-pri {
+  background: #00f29d;
+  border: none;
+  color: #031c13;
+  padding: 7px 18px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.hpc-btn-pri:hover:not(:disabled) {
+  background: #1affab;
+}
+
+.hpc-cand-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #080c13;
+  border: 1px solid #182130;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.hpc-cand-option.active {
+  border-color: #00f29d;
+  background: rgba(0, 242, 157, 0.05);
+}
+
+.hpc-citation-body {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ══════════════════════════════════════════════════════════
+   AEROSPEC HUD DESIGN SYSTEM (Cybernetic CAD Architecture)
+   ══════════════════════════════════════════════════════════ */
+
+/* Top HUD Persistent Navigation Bar */
+.cad-top-hud-navbar {
+  height: 56px;
+  background: rgba(15, 22, 32, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.cad-nav-brand {
+  display: flex;
+  align-items: center;
+}
+
+.cad-brand-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  color: #8aebff;
+}
+
+.cad-brand-plus {
+  width: 20px;
+  height: 20px;
+  background: #22d3ee;
+  color: #00363e;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+}
+
+.cad-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 28px;
+}
+
+.cad-nav-tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #94a3b8;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cad-nav-tab-btn:hover {
+  color: #f1f5f9;
+  background: rgba(20, 30, 44, 0.6);
+}
+
+.cad-nav-tab-btn.active {
+  background: rgba(34, 211, 238, 0.12);
+  border-color: rgba(34, 211, 238, 0.45);
+  color: #8aebff;
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.25);
+}
+
+.cad-nav-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 6px;
+  background: #0f1620;
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  border-radius: 6px;
+  padding: 6px 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  z-index: 200;
+  min-width: 170px;
+}
+
+.cad-dropdown-item {
+  display: block;
+  padding: 7px 16px;
+  color: #94a3b8;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  transition: all 0.15s;
+}
+
+.cad-dropdown-item:hover {
+  background: rgba(34, 211, 238, 0.1);
+  color: #22d3ee;
+}
+
+.cad-nav-right-hud {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.cad-nav-status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #dfe2eb;
+}
+
+.hud-dot.dot-green {
+  color: #10b981;
+  text-shadow: 0 0 8px #10b981;
+}
+
+.hud-dot.dot-red {
+  color: #ef4444;
+  text-shadow: 0 0 8px #ef4444;
+}
+
+.cad-nav-user-badge {
+  color: #94a3b8;
+}
+
+.cad-nav-user-badge strong {
+  color: #f1f5f9;
+}
+
+.cad-btn-nav-logout {
+  background: rgba(15, 22, 32, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-btn-nav-logout:hover {
+  border-color: #ef4444;
+  color: #ffb4ab;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ── Spec Upload Page Container ── */
+.cad-console-page {
+  background: #0a0e14;
+  min-height: calc(100vh - 56px);
+  padding: 24px 32px 48px;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: #dfe2eb;
+  font-family: var(--font-sans);
+}
+
+/* ── Top Alert Banner ── */
+.cad-top-alert-banner {
+  background: rgba(15, 22, 32, 0.75);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  border-radius: 8px;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  backdrop-filter: blur(12px);
+}
+
+.cad-top-alert-banner.cad-alert-error {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ffdad6;
+}
+
+.cad-alert-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cad-alert-icon {
+  color: #22d3ee;
+}
+
+.cad-alert-dismiss {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.cad-alert-dismiss:hover {
+  color: #ffffff;
+}
+
+/* ── Page Header Row ── */
+.cad-page-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cad-title-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cad-main-title {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.cad-badge-pipeline {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #22d3ee;
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.cad-badge-idle {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.cad-subtitle {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.cad-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cad-btn-load-demo {
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  color: #8aebff;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-btn-load-demo:hover {
+  background: rgba(34, 211, 238, 0.2);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.3);
+}
+
+.cad-pill-toggle {
+  background: #181c22;
+  border: 1px solid #3c494c;
+  color: #94a3b8;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-pill-toggle:hover {
+  color: #dfe2eb;
+  border-color: #859397;
+}
+
+/* ── Target Part Identifier Card ── */
+.cad-target-id-card {
+  background: rgba(15, 22, 32, 0.75);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 12px;
+  padding: 18px 22px;
+  backdrop-filter: blur(16px);
+}
+
+.cad-target-card-top {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.cad-target-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cad-info-circle {
+  color: #22d3ee;
+  cursor: pointer;
+}
+
+.cad-canonical-index strong {
+  color: #22d3ee;
+}
+
+.cad-target-input-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.cad-target-input {
+  flex: 1;
+  background: rgba(10, 14, 20, 0.85);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  color: #f1f5f9;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.cad-target-input:focus {
+  border-color: #38bdf8;
+  box-shadow: inset 0 0 8px rgba(34, 211, 238, 0.2), 0 0 12px rgba(34, 211, 238, 0.2);
+}
+
+.cad-locked-context-pill {
+  background: rgba(10, 14, 20, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cad-locked-context-pill.active {
+  border-color: rgba(34, 211, 238, 0.4);
+  color: #22d3ee;
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.cad-rev-warning-bar {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #f59e0b;
+}
+
+.cad-rev-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cad-rev-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cad-btn-rev-action {
+  background: transparent;
+  border: none;
+  color: #38bdf8;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.cad-btn-rev-action:hover {
+  color: #ffffff;
+}
+
+/* ── Futuristic CAD HUD Dropzone ── */
+.cad-hud-dropzone {
+  position: relative;
+  background: rgba(15, 22, 32, 0.5);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 14px;
+  padding: 38px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cad-hud-dropzone:hover,
+.cad-hud-dropzone.is-dragging {
+  border-color: #22d3ee;
+  background: rgba(20, 30, 44, 0.75);
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.25);
+}
+
+.hud-corner {
+  position: absolute;
+  color: #22d3ee;
+  font-family: monospace;
+  font-size: 1.3rem;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.hud-corner-tl { top: 6px; left: 8px; }
+.hud-corner-tr { top: 6px; right: 8px; }
+.hud-corner-bl { bottom: 6px; left: 8px; }
+.hud-corner-br { bottom: 6px; right: 8px; }
+
+.hud-axis-label {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: rgba(148, 163, 184, 0.5);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.hud-axis-l { left: 14px; }
+.hud-axis-r { right: 14px; }
+
+.cad-drop-holo-cube {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.2) 0%, rgba(10, 14, 20, 0) 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.cad-drop-main-text {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.cad-cyan-link {
+  color: #22d3ee;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cad-drop-subtext {
+  font-size: 0.82rem;
+  color: #94a3b8;
+}
+
+.cad-drop-formats-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.cad-fmt-tag {
+  background: rgba(10, 14, 20, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.cad-drop-security-line {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-top: 8px;
+}
+
+/* ── Document Queue & Pipeline ── */
+.cad-queue-section {
+  background: rgba(15, 22, 32, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.cad-queue-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.cad-queue-title-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cad-queue-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #dfe2eb;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.cad-queue-count-pill {
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  color: #22d3ee;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.cad-queue-specs-right {
+  color: #94a3b8;
+}
+
+.cad-queue-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cad-queue-item-card {
+  display: grid;
+  grid-template-columns: 36px 1.4fr 1.6fr auto;
+  align-items: center;
+  gap: 16px;
+  background: rgba(10, 14, 20, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 8px;
+  padding: 12px 16px;
+  transition: all 0.15s;
+}
+
+.cad-queue-item-card:hover {
+  border-color: rgba(34, 211, 238, 0.4);
+}
+
+.cad-file-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background: rgba(15, 22, 32, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cad-item-meta-col {
+  min-width: 0;
+}
+
+.cad-item-filename {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cad-item-subinfo {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.cad-item-progress-col {
+  min-width: 0;
+}
+
+.cad-progress-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  margin-bottom: 4px;
+  color: #94a3b8;
+}
+
+.status-dot {
+  margin-right: 4px;
+}
+
+.status-dot.dot-extracting { color: #22d3ee; }
+.status-dot.dot-verifying { color: #8b5cf6; }
+.status-dot.dot-complete { color: #10b981; }
+
+.cad-progress-bar-track {
+  width: 100%;
+  height: 5px;
+  background: #1c2026;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.cad-progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.fill-extracting {
+  background: linear-gradient(90deg, #22d3ee, #38bdf8);
+}
+
+.fill-verifying {
+  background: linear-gradient(90deg, #8b5cf6, #22d3ee);
+}
+
+.fill-complete {
+  background: #10b981;
+}
+
+.cad-error-pill-status {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ffb4ab;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.cad-item-actions-col {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cad-btn-item-action {
+  background: rgba(15, 22, 32, 0.8);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  color: #8aebff;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-btn-item-action:hover {
+  background: rgba(34, 211, 238, 0.15);
+  border-color: #22d3ee;
+}
+
+.cad-btn-retry-err {
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ffb4ab;
+}
+
+.cad-btn-item-delete {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.cad-btn-item-delete:hover {
+  color: #ef4444;
+}
+
+.cad-queue-bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.cad-btn-queue-opt {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-btn-queue-opt:hover {
+  border-color: #22d3ee;
+  color: #f1f5f9;
+}
+
+.cad-btn-queue-clear {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  margin-left: 12px;
+}
+
+.cad-btn-start-pipeline {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.25) 0%, rgba(56, 189, 248, 0.4) 100%);
+  border: 1px solid #22d3ee;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.35);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cad-btn-start-pipeline:hover:not(:disabled) {
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.6);
+  transform: translateY(-1px);
+}
+
+.cad-btn-start-pipeline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pipeline-btn-icon {
+  font-size: 1.1rem;
+}
+
+.cad-pipeline-active-progress {
+  margin-top: 14px;
+}
+
+.pipeline-pulse-track {
+  width: 100%;
+  height: 6px;
+  background: #1c2026;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.pipeline-pulse-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22d3ee, #8b5cf6);
+  transition: width 0.3s ease;
+}
+
+.pipeline-status-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: #22d3ee;
+  margin-top: 8px;
+}
+
+.cad-spinner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22d3ee;
+  box-shadow: 0 0 8px #22d3ee;
+  animation: pulse 1s infinite;
+}
+
+/* ── "Your Parts" Live Blueprint Gallery ── */
+.cad-parts-gallery-section {
+  margin-top: 8px;
+}
+
+.cad-gallery-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cad-gallery-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cad-gallery-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.cad-gallery-count-pill {
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  color: #22d3ee;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.cad-gallery-storage-pill {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.cad-gallery-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cad-search-box {
+  display: flex;
+  align-items: center;
+  background: rgba(10, 14, 20, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 6px;
+  padding: 6px 10px;
+  gap: 6px;
+}
+
+.cad-search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f1f5f9;
+  font-size: 0.78rem;
+  width: 180px;
+}
+
+.cad-filter-pills-group {
+  display: flex;
+  gap: 4px;
+  background: #181c22;
+  padding: 3px;
+  border-radius: 6px;
+  border: 1px solid #262a31;
+}
+
+.cad-gallery-pill {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cad-gallery-pill.active {
+  background: #262a31;
+  color: #f1f5f9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.cad-sort-dropdown {
+  background: rgba(10, 14, 20, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  outline: none;
+}
+
+/* 4-Card CAD Grid */
+.cad-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1200px) {
+  .cad-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .cad-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cad-part-card {
+  background: rgba(15, 22, 32, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.cad-part-card:hover {
+  border-color: #22d3ee;
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.2);
+  transform: translateY(-2px);
+}
+
+.cad-part-card.border-warning:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.2);
+}
+
+.cad-part-card.border-danger:hover {
+  border-color: #ef4444;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.2);
+}
+
+.cad-card-top-tag-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 6px;
+}
+
+.cad-tag-status {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.tag-success {
+  background: rgba(34, 211, 238, 0.12);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  color: #8aebff;
+}
+
+.tag-warning {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
+}
+
+.tag-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ffb4ab;
+}
+
+.tag-cyan {
+  background: rgba(34, 211, 238, 0.2);
+  border: 1px solid #22d3ee;
+  color: #ffffff;
+}
+
+.cad-wireframe-preview-box {
+  background: rgba(10, 14, 20, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 8px;
+  padding: 8px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 86px;
+}
+
+.cad-card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.cad-card-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #f1f5f9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cad-card-rev {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-left: 6px;
+}
+
+.cad-card-dim-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  margin-bottom: 6px;
+}
+
+.card-status-dot.dot-success { color: #10b981; }
+.card-status-dot.dot-warning { color: #f59e0b; }
+.card-status-dot.dot-danger { color: #ef4444; }
+.card-status-dot.dot-cyan { color: #22d3ee; }
+
+.card-status-name {
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.card-dim-count {
+  color: #94a3b8;
+}
+
+.cad-card-docs-summary {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.cad-card-footer-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.card-cad-badge {
+  color: #22d3ee;
+}
+
+.cad-card-action-btn {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.btn-success {
+  background: rgba(34, 211, 238, 0.12);
+  border-color: rgba(34, 211, 238, 0.4);
+  color: #8aebff;
+}
+
+.btn-success:hover {
+  background: rgba(34, 211, 238, 0.22);
+  border-color: #22d3ee;
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.3);
+}
+
+.btn-warning {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
+}
+
+.btn-warning:hover {
+  background: rgba(245, 158, 11, 0.22);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.22);
+}
+
+.btn-cyan {
+  background: rgba(34, 211, 238, 0.15);
+  border-color: #22d3ee;
+  color: #ffffff;
+}
+
+.btn-cyan:hover {
+  background: rgba(34, 211, 238, 0.25);
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.4);
+}
+
+/* ── Modals (Inspector & Settings) ── */
+.cad-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 20, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+}
+
+.cad-modal-card {
+  background: #0f1620;
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 580px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 24px rgba(34, 211, 238, 0.15);
+  overflow: hidden;
+}
+
+.cad-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  font-family: var(--font-display);
+  color: #f1f5f9;
+}
+
+.cad-modal-close {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.cad-modal-close:hover {
+  color: #ffffff;
+}
+
+.cad-modal-body {
+  padding: 20px;
+  font-size: 0.85rem;
+}
+
+.cad-inspect-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.cad-inspect-row .key {
+  color: #94a3b8;
+}
+
+.cad-inspect-row .val {
+  color: #f1f5f9;
+}
+
+.cad-inspect-row .text-cyan {
+  color: #22d3ee;
+}
+
+.cad-inspect-row .text-green {
+  color: #10b981;
+}
+
+.cad-inspect-sample-box {
+  margin-top: 14px;
+  background: #0a0e14;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #22d3ee;
+  line-height: 1.6;
+}
+
+.cad-modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cad-btn-modal-close {
+  background: rgba(34, 211, 238, 0.15);
+  border: 1px solid #22d3ee;
+  color: #ffffff;
+  padding: 7px 18px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cad-rigor-options {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cad-rigor-btn {
+  flex: 1;
+  background: rgba(10, 14, 20, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+  padding: 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.cad-rigor-btn.active {
+  border-color: #22d3ee;
+  background: rgba(34, 211, 238, 0.12);
+  color: #22d3ee;
+}
+
+.cad-setting-select {
+  width: 100%;
+  margin-top: 8px;
+  background: #0a0e14;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #f1f5f9;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  outline: none;
 }
 

@@ -12,15 +12,17 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, s
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
+import uuid
 from backend.database import get_db
 from backend.models import User, Part, SpecDocument, SpecField, PartGeometry
 from backend.schemas import (
     PartCreate, PartResponse, SpecDocumentResponse, SpecFieldResponse,
-    SpecFieldUpdate, SpecUploadResponse, SpecProcessingStatus
+    SpecFieldUpdate, SpecUploadResponse, SpecProcessingStatus, BatchParametersUpdate
 )
 from backend.auth import get_current_user
 from backend.storage import get_storage
 from execution.spec_pipeline import run_part_extraction_pipeline, process_spec_document
+from execution.model_pipeline import generate_part_model
 
 router = APIRouter(prefix="/api/specs", tags=["Specification Pipeline"])
 
@@ -668,6 +670,115 @@ def update_spec_field(
         tolerance_data=spec_field.tolerance_data,
         bbox=spec_field.bbox
     )
+
+
+@router.post("/parts/{part_id}/parameters")
+@router.put("/parts/{part_id}/parameters")
+def update_part_parameters(
+    part_id: str,
+    update: BatchParametersUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Live Dimension Tuner parameter sync.
+    Persists parameter values, creates missing fields, and regenerates 3D CAD models.
+    """
+    part = db.query(Part).filter(Part.id == part_id, Part.user_id == current_user.id).first()
+    if not part:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Part with ID '{part_id}' not found.")
+
+    param_dict = {}
+    if update.bore is not None:
+        param_dict["bore_diameter"] = (str(update.bore), "mm")
+    if update.rod is not None:
+        param_dict["rod_diameter"] = (str(update.rod), "mm")
+    if update.stroke is not None:
+        param_dict["stroke"] = (str(update.stroke), "mm")
+    if update.outer_diameter is not None:
+        param_dict["outer_diameter"] = (str(update.outer_diameter), "mm")
+    if update.pressure is not None:
+        param_dict["pressure_rating"] = (str(update.pressure), "bar")
+    if update.flange_width is not None:
+        param_dict["mounting_flange_width"] = (str(update.flange_width), "mm")
+    if update.parameters:
+        for k, v in update.parameters.items():
+            if isinstance(v, (int, float, str)):
+                unit = "bar" if "pressure" in k.lower() else "mm"
+                param_dict[k] = (str(v), unit)
+
+    existing_fields = db.query(SpecField).filter(SpecField.part_id == part.id).all()
+    fields_by_name = {f.field_name.lower(): f for f in existing_fields}
+
+    for field_name, (val_str, unit) in param_dict.items():
+        matched_field = None
+        # Direct match or alias match
+        for k, f in fields_by_name.items():
+            if k == field_name.lower() or field_name.lower() in k or k in field_name.lower():
+                matched_field = f
+                break
+
+        if matched_field:
+            matched_field.user_correction = val_str
+            matched_field.normalized_value = val_str
+            matched_field.unit = unit
+            matched_field.is_available = 1
+            matched_field.conflict = 0
+            matched_field.confidence = "high"
+            matched_field.not_available_reason = None
+            matched_field.correction_timestamp = datetime.now(timezone.utc)
+        else:
+            new_f = SpecField(
+                id=str(uuid.uuid4()),
+                part_id=part.id,
+                field_name=field_name,
+                raw_value=f"{val_str} {unit}",
+                normalized_value=val_str,
+                user_correction=val_str,
+                unit=unit,
+                original_unit=unit,
+                is_available=1,
+                confidence="high",
+                source_location="Live Dimension Tuner",
+                source_snippet="User calibrated live parameter",
+                extraction_method="user_tuned",
+                correction_timestamp=datetime.now(timezone.utc)
+            )
+            db.add(new_f)
+            fields_by_name[field_name.lower()] = new_f
+
+    if not part.part_type:
+        part.part_type = "cylinder"
+    part.status = "complete"
+
+    db.commit()
+
+    # Re-synthesize 3D CAD model
+    geometry_result = generate_part_model(part_id=part.id, db=db, force_rebuild=True)
+
+    # Return refreshed fields & geometry
+    all_fields = db.query(SpecField).filter(SpecField.part_id == part.id).all()
+    return {
+        "part_id": part.id,
+        "part_name": part.name,
+        "part_type": part.part_type,
+        "fields": [
+            {
+                "id": f.id,
+                "field_name": f.field_name,
+                "raw_value": f.raw_value,
+                "normalized_value": f.normalized_value,
+                "user_correction": f.user_correction,
+                "unit": f.unit,
+                "is_available": bool(f.is_available),
+                "confidence": f.confidence,
+                "source_location": f.source_location,
+            }
+            for f in all_fields
+        ],
+        "geometry": geometry_result
+    }
+
 
 
 @router.post("/fields/{field_id}/resolve_conflict", response_model=SpecFieldResponse)
