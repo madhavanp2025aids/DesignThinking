@@ -1,18 +1,12 @@
 /**
  * HYDAC Spec-to-3D Generator — Login / Signup Screen
- * Integrates Firebase Authentication (Email/Password & Session Persistence)
+ * Native JWT Authentication (Email/Password & OTP Email Verification)
  * with user-friendly error mapping, tab switcher, and existing UI styling.
  */
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
-import {
-  auth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  mapFirebaseAuthError,
-} from '../firebase';
 
 export default function LoginPage() {
   const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'verify'
@@ -46,60 +40,17 @@ export default function LoginPage() {
 
     try {
       if (mode === 'signup') {
-        // 1. Authenticate with Firebase Auth
-        let firebaseUser = null;
-        try {
-          const userCred = await createUserWithEmailAndPassword(auth, emailClean, password);
-          firebaseUser = userCred.user;
-          const idToken = await firebaseUser.getIdToken();
-          api.setToken(idToken);
-        } catch (fbErr) {
-          // If Firebase account already exists or has an auth error, handle cleanly
-          if (fbErr.code !== 'auth/api-key-not-valid') {
-            const friendlyMsg = mapFirebaseAuthError(fbErr);
-            throw new Error(friendlyMsg);
-          } else {
-            console.warn('Firebase API key missing, relying on backend only.');
-          }
-        }
-
-        // 2. Synchronize with backend database
-        try {
-          await api.signup(emailClean, password);
-        } catch (backendErr) {
-          if (!api.getToken()) {
-            throw backendErr;
-          }
-          // If we have a token (Firebase succeeded), we can ignore if backend says user exists
-        }
-
-        navigate('/specs/upload');
-      } else if (mode === 'login') {
-        // 1. Authenticate with Firebase Auth
-        let firebaseSuccess = false;
-        try {
-          const userCred = await signInWithEmailAndPassword(auth, emailClean, password);
-          const idToken = await userCred.user.getIdToken();
-          api.setToken(idToken);
-          firebaseSuccess = true;
-        } catch (fbErr) {
-          // If Firebase failed, fallback to checking backend credentials or map error
-          try {
-            await api.login(emailClean, password);
-            firebaseSuccess = true;
-          } catch (backendErr) {
-            if (fbErr.code === 'auth/api-key-not-valid') {
-              throw backendErr;
-            } else {
-              const friendlyMsg = mapFirebaseAuthError(fbErr);
-              throw new Error(friendlyMsg);
-            }
-          }
-        }
-
-        if (firebaseSuccess) {
+        const res = await api.signup(emailClean, password);
+        if (res.requires_verification) {
+          setMode('verify');
+          setCooldown(30);
+          setInfoMessage('Account created! A 6-digit verification code has been dispatched.');
+        } else {
           navigate('/specs/upload');
         }
+      } else if (mode === 'login') {
+        await api.login(emailClean, password);
+        navigate('/specs/upload');
       } else if (mode === 'verify') {
         if (!otpCode.trim() || otpCode.trim().length < 6) {
           setError('Please enter the full 6-digit verification code.');

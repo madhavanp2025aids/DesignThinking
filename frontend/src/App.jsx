@@ -1,7 +1,7 @@
 /**
  * HYDAC Spec-to-3D Generator — App Entry Point
- * Integrates Firebase Auth State Listener, Protected Route Guard,
- * Primary Spec-to-3D Flow, and Secondary Legacy Tools.
+ * Native Auth Protected Route Guard, Primary Spec-to-3D Flow,
+ * and Secondary Legacy Tools.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -14,7 +14,6 @@ import SpecUploadPage from './pages/SpecUploadPage';
 import SpecReviewPage from './pages/SpecReviewPage';
 import HologramViewerPage from './pages/HologramViewerPage';
 import api from './api/client';
-import { auth, onAuthStateChanged, signOut } from './firebase';
 import './index.css';
 
 function ProtectedRoute({ children }) {
@@ -23,28 +22,20 @@ function ProtectedRoute({ children }) {
   const [serverError, setServerError] = useState(false);
   const [showLegacyMenu, setShowLegacyMenu] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+  const isAuthenticated = api.isAuthenticated();
 
   useEffect(() => {
     checkHealth();
 
-    // Firebase Auth State Listener
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          const idToken = await firebaseUser.getIdToken();
-          api.setToken(idToken);
-          setIsAuthenticated(true);
-        } catch (e) {
-          setIsAuthenticated(api.isAuthenticated());
-        }
-      } else {
-        setIsAuthenticated(api.isAuthenticated());
-      }
+    if (api.isAuthenticated()) {
+      api.getMe()
+        .then((profile) => setUserProfile(profile))
+        .catch(() => {})
+        .finally(() => setAuthLoading(false));
+    } else {
       setAuthLoading(false);
-    });
-
-    return () => unsubscribe();
+    }
   }, []);
 
   const checkHealth = async () => {
@@ -57,12 +48,7 @@ function ProtectedRoute({ children }) {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.warn('Sign out error:', err);
-    }
+  const handleLogout = () => {
     api.clearToken();
     window.location.href = '/';
   };
@@ -114,7 +100,7 @@ function ProtectedRoute({ children }) {
     );
   }
 
-  const userName = auth.currentUser?.displayName || auth.currentUser?.email?.split('@')[0] || 'J. Vance';
+  const userName = userProfile?.email?.split('@')[0] || 'J. Vance';
 
   return (
     <div className="app-layout">

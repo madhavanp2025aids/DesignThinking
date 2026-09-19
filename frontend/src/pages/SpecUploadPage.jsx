@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
-import { auth } from '../firebase';
 
 const ACCEPTED_EXTENSIONS = ['.pdf', '.docx', '.doc', '.xlsx', '.xls', '.csv', '.tsv', '.pptx', '.ppt', '.step', '.stp'];
 
@@ -40,10 +39,6 @@ export default function SpecUploadPage() {
   // Inspect Modal
   const [inspectModalFile, setInspectModalFile] = useState(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-
-  // User
-  const user = auth.currentUser;
-  const userName = user?.displayName || user?.email?.split('@')[0] || 'J. Vance';
 
   useEffect(() => {
     loadRecentParts();

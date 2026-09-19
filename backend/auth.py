@@ -1,7 +1,6 @@
 """
 HYDAC Spec-to-3D Generator — Authentication Module
-JWT creation/verification, password hashing, FastAPI auth dependency,
-and seamless Firebase Auth ID token compatibility.
+JWT creation/verification, password hashing, and FastAPI auth dependency.
 """
 
 import os
@@ -48,13 +47,6 @@ def decode_access_token(token: str) -> dict:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except JWTError:
-        # Support Firebase Auth token claims seamlessly
-        try:
-            unverified = jwt.get_unverified_claims(token)
-            if unverified and ("user_id" in unverified or "sub" in unverified or "email" in unverified):
-                return unverified
-        except Exception:
-            pass
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
@@ -90,17 +82,6 @@ def get_current_user(
         user = db.query(User).filter(User.id == user_id).first()
     if not user and email:
         user = db.query(User).filter(User.email == email.strip().lower()).first()
-        if not user:
-            # Auto-provision user record for Firebase-authenticated session
-            user = User(
-                id=user_id or str(uuid.uuid4()),
-                email=email.strip().lower(),
-                hashed_password="firebase_authenticated_account",
-                email_verified=1
-            )
-            db.add(user)
-            db.commit()
-            db.refresh(user)
 
     if user is None:
         raise HTTPException(
