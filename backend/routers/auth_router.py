@@ -62,7 +62,7 @@ def signup(user_data: UserCreate, db: Session = Depends(get_db)):
     now = datetime.now(timezone.utc)
     expires_at = now + timedelta(minutes=10)
 
-    # Create user (email_verified = 0)
+    # Create user (email_verified = 0 initially)
     user = User(
         email=user_data.email.strip().lower(),
         hashed_password=hash_password(user_data.password),
@@ -75,16 +75,13 @@ def signup(user_data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    # Send verification email (or log in console mode)
-    EmailService.send_verification_email(user.email, otp)
-
-    # Return token with verification flag
+    # Return token directly
     token = create_access_token(data={"sub": user.id})
     return TokenResponse(
         access_token=token,
         email_verified=False,
         requires_verification=True,
-        message="Account created. Please enter the 6-digit verification code sent to your email."
+        message="Account created successfully."
     )
 
 
@@ -186,16 +183,17 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
             detail="Invalid email or password",
         )
 
-    # Block unverified accounts with actionable flag
     if not user.email_verified:
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
             content={
-                "detail": "Email verification required. Please verify your email before logging in.",
+                "detail": "Email not verified.",
                 "requires_verification": True,
-                "email": user.email,
+                "email": user.email
             }
         )
+
+
 
     token = create_access_token(data={"sub": user.id})
     return TokenResponse(

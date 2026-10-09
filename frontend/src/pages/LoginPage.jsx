@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
 
 export default function LoginPage() {
-  const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'verify'
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [otpCode, setOtpCode] = useState('');
@@ -40,34 +40,14 @@ export default function LoginPage() {
 
     try {
       if (mode === 'signup') {
-        const res = await api.signup(emailClean, password);
-        if (res.requires_verification) {
-          setMode('verify');
-          setCooldown(30);
-          setInfoMessage('Account created! A 6-digit verification code has been dispatched.');
-        } else {
-          navigate('/specs/upload');
-        }
+        await api.signup(emailClean, password);
+        navigate('/specs/upload');
       } else if (mode === 'login') {
         await api.login(emailClean, password);
         navigate('/specs/upload');
-      } else if (mode === 'verify') {
-        if (!otpCode.trim() || otpCode.trim().length < 6) {
-          setError('Please enter the full 6-digit verification code.');
-          setLoading(false);
-          return;
-        }
-        await api.verifyEmail(emailClean, otpCode.trim());
-        navigate('/specs/upload');
       }
     } catch (err) {
-      if (err.requires_verification) {
-        setMode('verify');
-        setCooldown(30);
-        setError(err.message || 'Please enter the verification code sent to your email.');
-      } else {
-        setError(err.message || 'An error occurred. Please try again.');
-      }
+      setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -104,81 +84,6 @@ export default function LoginPage() {
           <p className="subtitle">Spec-to-3D Generator</p>
         </div>
 
-        {mode === 'verify' ? (
-          /* Email Verification Step */
-          <form onSubmit={handleSubmit} className="login-form">
-            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-              <span style={{ fontSize: '2rem' }}>✉️</span>
-              <h2 style={{ fontSize: '1.2rem', color: 'var(--text-heading)', margin: '8px 0 4px' }}>
-                Verify Your Email
-              </h2>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                We sent a 6-digit one-time code to <strong style={{ color: 'var(--accent-blue)' }}>{email}</strong>
-              </p>
-            </div>
-
-            <div className="form-group" style={{ textAlign: 'center' }}>
-              <label htmlFor="otpCode" style={{ textAlign: 'center', display: 'block' }}>
-                6-Digit Verification Code
-              </label>
-              <input
-                id="otpCode"
-                type="text"
-                maxLength={6}
-                value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
-                placeholder="123456"
-                autoFocus
-                required
-                style={{
-                  textAlign: 'center',
-                  fontSize: '1.6rem',
-                  letterSpacing: '8px',
-                  fontWeight: 'bold',
-                  color: '#00f0ff',
-                  padding: '10px',
-                }}
-              />
-            </div>
-
-            {infoMessage && (
-              <div style={{ fontSize: '0.8rem', color: '#10b981', textAlign: 'center', marginBottom: '12px' }}>
-                {infoMessage}
-              </div>
-            )}
-
-            {error && <div className="form-error">{error}</div>}
-
-            <button type="submit" className="btn-primary" disabled={loading} style={{ width: '100%', marginBottom: '10px' }}>
-              {loading ? 'Verifying…' : 'Verify & Enter'}
-            </button>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
-              <button
-                type="button"
-                className="btn-link"
-                onClick={handleResendCode}
-                disabled={cooldown > 0 || loading}
-                style={{ fontSize: '0.85rem' }}
-              >
-                {cooldown > 0 ? `Resend code in ${cooldown}s` : 'Resend Code'}
-              </button>
-
-              <button
-                type="button"
-                className="btn-link"
-                onClick={() => {
-                  setMode('login');
-                  setError('');
-                  setInfoMessage('');
-                }}
-                style={{ fontSize: '0.85rem' }}
-              >
-                ← Back to Login
-              </button>
-            </div>
-          </form>
-        ) : (
           /* Standard Login & Signup with Prominent Tab Switcher */
           <div>
             {/* Top Segmented Navigation Tabs */}
@@ -321,7 +226,6 @@ export default function LoginPage() {
               </div>
             </form>
           </div>
-        )}
 
         <div className="login-footer">
           <p>Parse hydraulics specs → Generate exact 3D models</p>
